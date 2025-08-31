@@ -26,7 +26,7 @@ const Sidebar = ({ activePage, onPageChange }) => {
               <li key={item.id}>
                 <button
                   onClick={() => onPageChange(item.id)}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors bg-transparent ${
                     activePage === item.id
                       ? `${darkMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700'}`
                       : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`

@@ -288,42 +288,42 @@ const Customers = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-              {filteredCustomers.map((customer) => (
-                <tr key={customer.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium">{customer.customerName}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{customer.carType}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{customer.carNumber}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{customer.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => openEditModal(customer)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
-                      >
-                        <Edit size={14} className="inline mr-1" />
-                        {t('editCustomer')}
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(customer)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
-                      >
-                        <Trash2 size={14} className="inline mr-1" />
-                        {t('deleteCustomer')}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                         <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+               {filteredCustomers.map((customer) => (
+                 <tr key={customer.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm font-medium">{customer.customerName}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{customer.carType}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{customer.carNumber}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{customer.phone}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                     <div className="flex gap-2 justify-center">
+                       <button
+                         onClick={() => openEditModal(customer)}
+                         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
+                       >
+                         <Edit size={14} className="inline mr-1" />
+                         {t('editCustomer')}
+                       </button>
+                       <button
+                         onClick={() => openDeleteModal(customer)}
+                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                       >
+                         <Trash2 size={14} className="inline mr-1" />
+                         {t('deleteCustomer')}
+                       </button>
+                     </div>
+                   </td>
+                 </tr>
+               ))}
+             </tbody>
           </table>
 
           {filteredCustomers.length === 0 && (
@@ -335,7 +335,7 @@ const Customers = () => {
 
         {/* Add Customer Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addCustomer')}</h2>
               <div className="space-y-4">
@@ -396,7 +396,7 @@ const Customers = () => {
 
         {/* Edit Customer Modal */}
         {showEditModal && editingCustomer && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editCustomer')}</h2>
               <div className="space-y-4">

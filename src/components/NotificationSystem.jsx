@@ -162,7 +162,7 @@ const NotificationContainer = () => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2">
+    <div className="fixedNotification z-50 space-y-2">
       {notifications.length > 1 && (
         <div className="flex justify-between items-center mb-2">
           <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -202,7 +202,7 @@ const NotificationContainer = () => {
             
             <button
               onClick={() => removeNotification(notification.id)}
-              className={`flex-shrink-0 p-1 rounded-full ${darkMode ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'}`}
+              className={`flex-shrink-0 p-1 space-x-2 rounded-full ${darkMode ? 'text-gray-400 hover:text-gray-300 hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'}`}
             >
               <X size={16} />
             </button>

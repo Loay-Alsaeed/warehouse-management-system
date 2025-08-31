@@ -330,41 +330,41 @@ const Products = () => {
             <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
               {filteredProducts.map((product) => (
                 <tr key={product.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm font-medium">{product.name}</div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-center">
                     <div className="text-sm max-w-xs truncate">{product.description}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.category}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.storageLocation}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.quantity}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.price} JOD</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <span className={`text-sm font-medium ${getAvailabilityColor(product.quantity)}`}>
                       {getAvailabilityStatus(product.quantity)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => openEditModal(product)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
+                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs "
                       >
                         <Edit size={14} className="inline mr-1" />
                         {t('editProduct')}
                       </button>
                       <button
                         onClick={() => openDeleteModal(product)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs "
                       >
                         <Trash2 size={14} className="inline mr-1" />
                         {t('deleteProduct')}
@@ -385,7 +385,7 @@ const Products = () => {
 
         {/* Add Product Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addProduct')}</h2>
               <div className="space-y-4">
@@ -461,6 +461,7 @@ const Products = () => {
                 <button
                   onClick={handleAddProduct}
                   className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  disabled={!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price || loading}
                 >
                   {t('save')}
                 </button>
@@ -471,7 +472,7 @@ const Products = () => {
 
         {/* Edit Product Modal */}
         {showEditModal && editingProduct && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editProduct')}</h2>
               <div className="space-y-4">

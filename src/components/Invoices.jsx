@@ -625,22 +625,22 @@ const Invoices = () => {
             <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm font-medium">{invoice.invoiceNumber}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{invoice.customerName}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{invoice.carNumber}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{invoice.invoiceDate}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm font-medium">{formatNumber(invoice.finalAmount)} JOD</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         invoice.paymentMethod === 'cash' 
@@ -651,8 +651,8 @@ const Invoices = () => {
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => openEditModal(invoice)}
                         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
@@ -664,9 +664,9 @@ const Invoices = () => {
                         onClick={() => openDeleteModal(invoice)}
                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
                       >
-                        <Trash2 size={14} className="inline mr-1" />
+                                                <Trash2 size={14} className="inline mr-1" />
                         {t('deleteInvoice')}
-                      </button>
+                       </button>
                     </div>
                   </td>
                 </tr>
@@ -683,8 +683,8 @@ const Invoices = () => {
 
         {/* Add Invoice Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-            <div className={`p-6 rounded-lg w-full max-w-4xl max-h-screen overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className="fixed inset-0 w-full h-full py-4 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+            <div className={`p-6 rounded-lg max-w-4xl h-full overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addInvoice')}</h2>
               
               {/* Customer Information */}
@@ -998,6 +998,7 @@ const Invoices = () => {
                 <button
                   onClick={handleAddInvoice}
                   className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center justify-center gap-2"
+                  disabled={!newInvoice.customerId || !newInvoice.customerName || !newInvoice.carType || !newInvoice.carNumber || !newInvoice.phone || (newInvoice.products.length ===0 && newInvoice.services.length ===0) || loading}
                 >
                   <Save size={16} />
                   {t('saveInvoice')}
@@ -1009,8 +1010,8 @@ const Invoices = () => {
 
         {/* View Invoice Modal */}
         {showEditModal && editingInvoice && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-            <div className={`p-6 rounded-lg w-full max-w-4xl max-h-screen overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className="fixed inset-0 w-full h-full py-4 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+            <div className={`p-6 rounded-lg my-4 max-w-4xl h-full overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               {/* Compact Invoice Header */}
               <div className="text-center mb-6">
                 <h1 className="text-2xl font-bold text-indigo-600 mb-1">{t('invoiceHeader')}</h1>
@@ -1140,7 +1141,7 @@ const Invoices = () => {
 
         {/* Add New Customer Modal */}
         {showNewCustomerForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addNewCustomer')}</h2>
               

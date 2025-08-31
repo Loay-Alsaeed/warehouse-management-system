@@ -1,0 +1,202 @@
+/* =======================
+   الحاوية الرئيسية
+======================= */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f3f4f6; /* مثل bg-gray-100 */
+  position: relative;
+  margin: auto;
+}
+
+/* الوضع الداكن */
+.app-container.dark {
+  background-color: #111827; /* bg-gray-900 */
+  color: #e5e7eb;
+}
+
+/* =======================
+   الشريط العلوي (أزرار اللغة والثيم)
+======================= */
+.top-bar {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.theme-toggle-btn,
+.lang-btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: background-color 0.2s ease;
+}
+
+.theme-toggle-btn:hover,
+.lang-btn:hover {
+  background-color: #f3f4f6; /* hover:bg-gray-100 */
+}
+
+.app-container.dark .theme-toggle-btn,
+.app-container.dark .lang-btn {
+  background-color: #374151; /* bg-gray-700 */
+  color: #fff;
+  border-color: #4b5563;
+}
+
+.app-container.dark .theme-toggle-btn:hover,
+.app-container.dark .lang-btn:hover {
+  background-color: #4b5563; /* hover:bg-gray-600 */
+}
+
+/* =======================
+   صندوق تسجيل الدخول
+======================= */
+.login-box {
+  max-width: 28rem; /* مثل max-w-md */
+  width: 100%;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.app-container.dark .login-box {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #f9fafb;
+}
+
+/* =======================
+   العنوان
+======================= */
+.login-title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.app-container.dark .login-title {
+  color: #fff;
+}
+
+.login-title.light {
+  color: #111827; /* gray-900 */
+}
+
+/* =======================
+   صندوق الخطأ
+======================= */
+.error-box {
+  background-color: #fee2e2; /* red-100 */
+  border: 1px solid #f87171; /* red-400 */
+  color: #b91c1c; /* red-700 */
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+/* =======================
+   الحقول (إيميل - باسورد)
+======================= */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.app-container.dark .form-group label {
+  color: #d1d5db; /* gray-300 */
+}
+
+.form-group label.light {
+  color: #374151; /* gray-700 */
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #6366f1; /* indigo-500 */
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.4);
+}
+
+.app-container.dark .input-field {
+  background-color: #374151; /* gray-700 */
+  color: #fff;
+  border-color: #4b5563;
+}
+
+/* زر إظهار/إخفاء كلمة المرور */
+.password-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* =======================
+   Checkbox "تذكرني"
+======================= */
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.checkbox:checked {
+  background-color: #4f46e5; /* indigo-600 */
+  border-color: #4f46e5;
+}
+
+/* =======================
+   زر تسجيل الدخول
+======================= */
+.submit-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5; /* indigo-600 */
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #4338ca; /* indigo-700 */
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

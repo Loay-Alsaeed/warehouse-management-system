@@ -78,10 +78,10 @@ const ConfirmationModal = ({
   const styles = getTypeStyles();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 w-full h-full z-50 flex items-center justify-center bg-black bg-opacity-50">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="absolute inset-0 w-full h-full bg-black bg-opacity-50 transition-opacity"
         onClick={handleCancel}
       ></div>
       
@@ -89,7 +89,7 @@ const ConfirmationModal = ({
       <div className={`relative w-full max-w-md mx-4 ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-xl border ${styles.border} animate-fade-in-up`}>
         {/* Header */}
         <div className={`flex items-center justify-between p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 gap-4">
             <div className={`${styles.icon}`}>
               <AlertTriangle size={24} />
             </div>
@@ -113,16 +113,16 @@ const ConfirmationModal = ({
         </div>
         
         {/* Footer */}
-        <div className={`flex justify-end space-x-3 p-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`flex justify-between space-x-3 p-6 border-t gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <button
             onClick={handleCancel}
-            className={`px-4 py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+            className={`w-full px-4 py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
           >
             {t(cancelText)}
           </button>
           <button
             onClick={handleConfirm}
-            className={`px-4 py-2 rounded-lg transition-colors ${styles.button}`}
+            className={`w-full px-4 py-2 rounded-lg transition-colors ${styles.button}`}
           >
             {t(confirmText)}
           </button>

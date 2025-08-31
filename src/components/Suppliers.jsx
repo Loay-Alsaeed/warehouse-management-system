@@ -238,10 +238,10 @@ const Suppliers = () => {
           <table className="w-full">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('companyName')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center">
                     <Building2 size={16} />
                     {t('companyName')}
                     {sortBy === 'companyName' && (
@@ -249,10 +249,10 @@ const Suppliers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('contactPerson')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center">
                     <User size={16} />
                     {t('contactPerson')}
                     {sortBy === 'contactPerson' && (
@@ -260,10 +260,10 @@ const Suppliers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('phone')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center">
                     <Phone size={16} />
                     {t('phone')}
                     {sortBy === 'phone' && (
@@ -271,10 +271,10 @@ const Suppliers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('email')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 justify-center">
                     <Mail size={16} />
                     {t('email')}
                     {sortBy === 'email' && (
@@ -282,49 +282,49 @@ const Suppliers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
                 </th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-              {filteredSuppliers.map((supplier) => (
-                <tr key={supplier.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium">{supplier.companyName}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{supplier.contactPerson}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{supplier.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm">{supplier.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => openEditModal(supplier)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
-                      >
-                        <Edit size={14} className="inline mr-1" />
-                        {t('editSupplier')}
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(supplier)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
-                      >
-                        <Trash2 size={14} className="inline mr-1" />
-                        {t('deleteSupplier')}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                         <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+               {filteredSuppliers.map((supplier) => (
+                 <tr key={supplier.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm font-medium">{supplier.companyName}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{supplier.contactPerson}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{supplier.phone}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                     <div className="text-sm">{supplier.email}</div>
+                   </td>
+                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                     <div className="flex gap-2 justify-center">
+                       <button
+                         onClick={() => openEditModal(supplier)}
+                         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
+                       >
+                         <Edit size={14} className="inline mr-1" />
+                         {t('editSupplier')}
+                       </button>
+                       <button
+                         onClick={() => openDeleteModal(supplier)}
+                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                       >
+                         <Trash2 size={14} className="inline mr-1" />
+                         {t('deleteSupplier')}
+                       </button>
+                     </div>
+                   </td>
+                 </tr>
+               ))}
+             </tbody>
           </table>
 
           {filteredSuppliers.length === 0 && (
@@ -336,7 +336,7 @@ const Suppliers = () => {
 
         {/* Add Supplier Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addSupplier')}</h2>
               <div className="space-y-4">
@@ -386,7 +386,9 @@ const Suppliers = () => {
                 </button>
                 <button
                   onClick={handleAddSupplier}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!newSupplier.companyName || !newSupplier.contactPerson || !newSupplier.phone || !newSupplier.email || loading}
+                  
                 >
                   {t('save')}
                 </button>
@@ -397,7 +399,7 @@ const Suppliers = () => {
 
         {/* Edit Supplier Modal */}
         {showEditModal && editingSupplier && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editSupplier')}</h2>
               <div className="space-y-4">
