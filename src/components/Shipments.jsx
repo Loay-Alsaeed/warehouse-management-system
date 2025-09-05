@@ -490,10 +490,10 @@ const Shipments = () => {
           <table className="w-full text-center">
             <thead className={`text-center ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('shipmentNumber')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Package size={16} />
                     {t('shipmentNumber')}
                     {sortBy === 'shipmentNumber' && (
@@ -501,10 +501,10 @@ const Shipments = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('supplierName')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <User size={16} />
                     {t('supplierName')}
                     {sortBy === 'supplierName' && (
@@ -512,10 +512,10 @@ const Shipments = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('shipmentDate')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Calendar size={16} />
                     {t('shipmentDate')}
                     {sortBy === 'shipmentDate' && (
@@ -523,10 +523,10 @@ const Shipments = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('totalAmount')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Package size={16} />
                     {t('totalAmount')}
                     {sortBy === 'totalAmount' && (
@@ -534,7 +534,7 @@ const Shipments = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
@@ -874,10 +874,10 @@ const Shipments = () => {
                   <table className="w-full">
                     <thead className={`${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
                       <tr>
-                        <th className="px-3 py-2 text-left text-sm font-semibold">{t('productName')}</th>
+                        <th className="px-3 py-2 text-center  text-sm font-semibold">{t('productName')}</th>
                         <th className="px-3 py-2 text-center text-sm font-semibold">{t('quantity')}</th>
-                        <th className="px-3 py-2 text-right text-sm font-semibold">{t('unitPrice')}</th>
-                        <th className="px-3 py-2 text-right text-sm font-semibold">{t('amount')}</th>
+                        <th className="px-3 py-2 text-center text-sm font-semibold">{t('unitPrice')}</th>
+                        <th className="px-3 py-2 text-center text-sm font-semibold">{t('amount')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">

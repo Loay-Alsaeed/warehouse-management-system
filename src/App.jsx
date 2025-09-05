@@ -13,7 +13,7 @@ function App() {
       <ThemeProvider>
         <NotificationProvider>
           <AuthProvider>
-            <div className="App">
+            <div className="App min-h-screen" style={{minHeight: '100vh'}}>
               <Routes>
                 <Route path="/login" element={<Navigate to="/" replace />} />
                 <Route 

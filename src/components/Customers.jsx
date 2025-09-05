@@ -134,13 +134,13 @@ const Customers = () => {
 
   const handleAddCustomer = async () => {
     try {
+      setShowAddModal(false);
       const customerData = {
         ...newCustomer,
         createdAt: new Date()
       };
 
       await addDoc(collection(db, 'customers'), customerData);
-      setShowAddModal(false);
       setNewCustomer({
         customerName: '',
         carType: '',
@@ -237,10 +237,10 @@ const Customers = () => {
           <table className="w-full">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('customerName')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <User size={16} />
                     {t('customerName')}
                     {sortBy === 'customerName' && (
@@ -248,10 +248,10 @@ const Customers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('carType')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Car size={16} />
                     {t('carType')}
                     {sortBy === 'carType' && (
@@ -259,10 +259,10 @@ const Customers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('carNumber')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Car size={16} />
                     {t('carNumber')}
                     {sortBy === 'carNumber' && (
@@ -270,10 +270,10 @@ const Customers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('phone')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Phone size={16} />
                     {t('phone')}
                     {sortBy === 'phone' && (
@@ -281,7 +281,7 @@ const Customers = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
@@ -384,8 +384,9 @@ const Customers = () => {
                   {t('cancel')}
                 </button>
                 <button
-                  onClick={handleAddCustomer}
+                  onClick={loading ? null : handleAddCustomer}
                   className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  disabled={!newCustomer.customerName || !newCustomer.carType || !newCustomer.carNumber || !newCustomer.phone || loading}
                 >
                   {t('save')}
                 </button>

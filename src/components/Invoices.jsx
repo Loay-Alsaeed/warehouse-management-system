@@ -29,12 +29,14 @@ import {
 } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
 import ConfirmationModal from './ConfirmationModal';
+import ProductSelectionModal from './ProductSelectionModal';
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [availableServices, setAvailableServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('invoiceNumber');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -44,6 +46,7 @@ const Invoices = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+  const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
   const { t, i18n } = useTranslation();
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
@@ -75,6 +78,7 @@ const Invoices = () => {
   });
 
   const [newService, setNewService] = useState({
+    serviceId: '',
     serviceName: '',
     price: 0
   });
@@ -92,6 +96,7 @@ const Invoices = () => {
     fetchInvoices();
     fetchCustomers();
     fetchProducts();
+    fetchServices();
   }, []);
 
   useEffect(() => {
@@ -140,6 +145,19 @@ const Invoices = () => {
       setProducts(productsData);
     } catch (error) {
       console.error('Error fetching products:', error);
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'services'));
+      const servicesData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setAvailableServices(servicesData);
+    } catch (error) {
+      console.error('Error fetching services:', error);
     }
   };
 
@@ -249,6 +267,42 @@ const Invoices = () => {
     }
   };
 
+  const handleServiceSelect = (serviceId) => {
+    const service = availableServices.find(s => s.id === serviceId);
+    if (service) {
+      setNewService({
+        serviceId: service.id,
+        serviceName: service.name,
+        price: parseFloat(service.price) || 0
+      });
+    }
+  };
+
+  const handleProductSelectionFromModal = (product) => {
+    // Check if product is already in the invoice
+    const existingProduct = newInvoice.products.find(p => p.productId === product.id);
+    if (existingProduct) {
+      showError(t('error'), t('productAlreadyAdded'));
+      return;
+    }
+
+    const productToAdd = {
+      productId: product.id,
+      productName: product.name,
+      quantity: 1,
+      price: parseFloat(product.price) || 0,
+      total: parseFloat(product.price) || 0,
+      maxQuantity: parseInt(product.quantity) || 0
+    };
+
+    setNewInvoice(prev => ({
+      ...prev,
+      products: [...prev.products, productToAdd]
+    }));
+    
+    setShowProductSelectionModal(false);
+  };
+
   const addProductToInvoice = () => {
     if (!newProduct.productId || !newProduct.productName) {
       showError(t('error'), t('selectProductRequired'));
@@ -289,8 +343,8 @@ const Invoices = () => {
   };
 
   const addServiceToInvoice = () => {
-    if (!newService.serviceName || newService.serviceName.trim() === '') {
-      showError(t('error'), t('enterServiceName'));
+    if (!newService.serviceId || !newService.serviceName) {
+      showError(t('error'), t('selectServiceRequired'));
       return;
     }
     
@@ -299,11 +353,19 @@ const Invoices = () => {
       return;
     }
     
+    // Check if service already exists in the invoice
+    const existingService = newInvoice.services.find(s => s.serviceId === newService.serviceId);
+    if (existingService) {
+      showError(t('error'), t('serviceAlreadyAdded'));
+      return;
+    }
+    
     setNewInvoice(prev => ({
       ...prev,
       services: [...prev.services, { ...newService }]
     }));
     setNewService({
+      serviceId: '',
       serviceName: '',
       price: 0
     });
@@ -500,8 +562,49 @@ const Invoices = () => {
 
   const handleDeleteInvoice = async (invoiceId) => {
     try {
-      await deleteDoc(doc(db, 'invoices', invoiceId));
+      // Find the invoice to get its products
+      const invoiceToDelete = invoices.find(invoice => invoice.id === invoiceId);
+      
+      if (!invoiceToDelete) {
+        showError(t('error'), t('invoiceNotFound'));
+        return;
+      }
+
+      // Create batch for atomic operations
+      const batch = writeBatch(db);
+
+      // Return products quantities to inventory
+      if (invoiceToDelete.products && invoiceToDelete.products.length > 0) {
+        for (const invoiceProduct of invoiceToDelete.products) {
+          if (invoiceProduct.productId) {
+            // Find the current product in inventory
+            const currentProduct = products.find(p => p.id === invoiceProduct.productId);
+            
+            if (currentProduct) {
+              // Calculate new quantity (add back the sold quantity)
+              const newQuantity = (currentProduct.quantity || 0) + (invoiceProduct.quantity || 0);
+              
+              // Update product quantity in batch
+              const productRef = doc(db, 'products', invoiceProduct.productId);
+              batch.update(productRef, {
+                quantity: newQuantity,
+                available: newQuantity > 0
+              });
+            }
+          }
+        }
+      }
+
+      // Delete the invoice
+      const invoiceRef = doc(db, 'invoices', invoiceId);
+      batch.delete(invoiceRef);
+
+      // Commit all changes
+      await batch.commit();
+
+      // Refresh data
       fetchInvoices();
+      fetchProducts(); // Refresh products to show updated quantities
       success(t('invoiceDeleted'), t('invoiceDeletedMessage'));
     } catch (error) {
       console.error('Error deleting invoice:', error);
@@ -561,10 +664,10 @@ const Invoices = () => {
           <table className="w-full">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('invoiceNumber')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <FileText size={16} />
                     {t('invoiceNumber')}
                     {sortBy === 'invoiceNumber' && (
@@ -572,10 +675,10 @@ const Invoices = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('customerName')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <User size={16} />
                     {t('customerName')}
                     {sortBy === 'customerName' && (
@@ -583,15 +686,15 @@ const Invoices = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('carNumber')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('invoiceDate')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <FileText size={16} />
                     {t('invoiceDate')}
                     {sortBy === 'invoiceDate' && (
@@ -599,10 +702,10 @@ const Invoices = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('finalAmount')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <Calculator size={16} />
                     {t('finalAmount')}
                     {sortBy === 'finalAmount' && (
@@ -610,12 +713,12 @@ const Invoices = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('paymentMethod')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
@@ -748,7 +851,17 @@ const Invoices = () => {
 
               {/* Products Section */}
               <div className="mb-6">
-                <h3 className="font-medium mb-4">{t('products')}</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">{t('products')}</h3>
+                  <button
+                    type="button"
+                    onClick={() => setShowProductSelectionModal(true)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm"
+                  >
+                    <Package size={16} />
+                    {t('browseProducts')}
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
                   <select
                     value={newProduct.productId}
@@ -846,17 +959,23 @@ const Invoices = () => {
               <div className="mb-6">
                 <h3 className="font-medium mb-4">{t('services')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
-                  <input
-                    type="text"
-                    placeholder={t('serviceName')}
-                    value={newService.serviceName}
-                    onChange={(e) => setNewService({...newService, serviceName: e.target.value})}
+                  <select
+                    value={newService.serviceId}
+                    onChange={(e) => handleServiceSelect(e.target.value)}
                     className={`px-3 py-2 border rounded ${
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
-                  />
+                  >
+                    <option value="">{t('selectService')}</option>
+                    {availableServices.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name} - {service.price} JOD
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="number"
+                    step="0.01"
                     placeholder={t('servicePrice')}
                     value={newService.price}
                     onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value) || 0})}
@@ -1062,10 +1181,10 @@ const Invoices = () => {
                   <table className="w-full">
                     <thead className={`${darkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
                       <tr>
-                        <th className="px-3 py-2 text-left text-sm font-semibold">{t('itemDescription')}</th>
+                        <th className="px-3 py-2 text-center text-sm font-semibold">{t('itemDescription')}</th>
                         <th className="px-3 py-2 text-center text-sm font-semibold">{t('quantity')}</th>
-                        <th className="px-3 py-2 text-right text-sm font-semibold">{t('unitPrice')}</th>
-                        <th className="px-3 py-2 text-right text-sm font-semibold">{t('amount')}</th>
+                        <th className="px-3 py-2 text-center text-sm font-semibold">{t('unitPrice')}</th>
+                        <th className="px-3 py-2 text-center text-sm font-semibold">{t('amount')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -1227,6 +1346,15 @@ const Invoices = () => {
           confirmText="delete"
           cancelText="cancel"
           type="danger"
+        />
+
+        {/* Product Selection Modal */}
+        <ProductSelectionModal
+          isOpen={showProductSelectionModal}
+          onClose={() => setShowProductSelectionModal(false)}
+          products={products}
+          onProductSelect={handleProductSelectionFromModal}
+          selectedProducts={newInvoice.products}
         />
       </div>
     </div>

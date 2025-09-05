@@ -48,7 +48,10 @@ const Products = () => {
     storageLocation: '',
     quantity: '',
     price: '',
-    category: ''
+    category: '',
+    partNumber: '',
+    brandName: '',
+    cost: ''
   });
 
   useEffect(() => {
@@ -88,7 +91,9 @@ const Products = () => {
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.storageLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.partNumber && product.partNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (product.brandName && product.brandName.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -153,7 +158,10 @@ const Products = () => {
         storageLocation: '',
         quantity: '',
         price: '',
-        category: ''
+        category: '',
+        partNumber: '',
+        brandName: '',
+        cost: ''
       });
       fetchProducts();
       success(t('productAdded'), t('productAddedMessage'));
@@ -270,57 +278,73 @@ const Products = () => {
           <table className="w-full">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('name')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     {t('productName')}
                     {sortBy === 'name' && (
                       sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-4 py-3 text-center text-xs font-medium uppercase tracking-wider w-48 ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('description')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('category')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  {t('partNumber')}
+                </th>
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  {t('brandName')}
+                </th>
+               
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('storageLocation')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('quantity')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     {t('quantity')}
                     {sortBy === 'quantity' && (
                       sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  {t('cost')}
+                </th>
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('price')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     {t('price')}
                     {sortBy === 'price' && (
                       sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('available')}
                 </th>
-                <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
@@ -333,12 +357,24 @@ const Products = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm font-medium">{product.name}</div>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="text-sm max-w-xs truncate">{product.description}</div>
+                  <td className="px-4 py-4 text-center">
+                    <div 
+                      className="text-sm w-48 truncate cursor-help" 
+                      title={product.description}
+                    >
+                      {product.description}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.category}</div>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <div className="text-sm">{product.partNumber || '-'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <div className="text-sm">{product.brandName || '-'}</div>
+                  </td>
+                 
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.storageLocation}</div>
                   </td>
@@ -346,8 +382,12 @@ const Products = () => {
                     <div className="text-sm">{product.quantity}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <div className="text-sm">{product.cost ? `${product.cost} JOD` : '-'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <div className="text-sm">{product.price} JOD</div>
                   </td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <span className={`text-sm font-medium ${getAvailabilityColor(product.quantity)}`}>
                       {getAvailabilityStatus(product.quantity)}
@@ -357,17 +397,17 @@ const Products = () => {
                     <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => openEditModal(product)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs "
+                        className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"
+                        title={t('editProduct')}
                       >
-                        <Edit size={14} className="inline mr-1" />
-                        {t('editProduct')}
+                        <Edit size={16} />
                       </button>
                       <button
                         onClick={() => openDeleteModal(product)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs "
+                        className="bg-red-600 text-white p-2 rounded hover:bg-red-700 transition-colors"
+                        title={t('deleteProduct')}
                       >
-                        <Trash2 size={14} className="inline mr-1" />
-                        {t('deleteProduct')}
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -424,6 +464,25 @@ const Products = () => {
                 </datalist>
                 <input
                   type="text"
+                  placeholder={t('partNumber')}
+                  value={newProduct.partNumber}
+                  onChange={(e) => setNewProduct({...newProduct, partNumber: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="text"
+                  placeholder={t('brandName')}
+                  value={newProduct.brandName}
+                  onChange={(e) => setNewProduct({...newProduct, brandName: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                
+                <input
+                  type="text"
                   placeholder={t('storageLocation')}
                   value={newProduct.storageLocation}
                   onChange={(e) => setNewProduct({...newProduct, storageLocation: e.target.value})}
@@ -440,7 +499,17 @@ const Products = () => {
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
                 />
-                               <input
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder={t('cost')}
+                  value={newProduct.cost}
+                  onChange={(e) => setNewProduct({...newProduct, cost: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
                  type="number"
                  step="0.01"
                  placeholder={t('price')}
@@ -509,6 +578,34 @@ const Products = () => {
                     <option key={category} value={category} />
                   ))}
                 </datalist>
+                <input
+                  type="text"
+                  placeholder={t('partNumber')}
+                  value={editingProduct.partNumber || ''}
+                  onChange={(e) => setEditingProduct({...editingProduct, partNumber: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="text"
+                  placeholder={t('brandName')}
+                  value={editingProduct.brandName || ''}
+                  onChange={(e) => setEditingProduct({...editingProduct, brandName: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder={t('cost')}
+                  value={editingProduct.cost || ''}
+                  onChange={(e) => setEditingProduct({...editingProduct, cost: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
                 <input
                   type="text"
                   placeholder={t('storageLocation')}

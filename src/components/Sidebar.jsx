@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import { Package, Home, Building2, User, FileText, Truck } from 'lucide-react';
+import { Package, Home, Building2, User, FileText, Truck, Wrench, TrendingUp } from 'lucide-react';
 
 const Sidebar = ({ activePage, onPageChange }) => {
   const { t, i18n } = useTranslation();
@@ -10,14 +10,16 @@ const Sidebar = ({ activePage, onPageChange }) => {
   const menuItems = [
     { id: 'dashboard', label: t('dashboard'), icon: Home },
     { id: 'products', label: t('products'), icon: Package },
+    { id: 'services', label: t('services'), icon: Wrench },
     { id: 'suppliers', label: t('suppliers'), icon: Building2 },
     { id: 'customers', label: t('customers'), icon: User },
     { id: 'invoices', label: t('invoices'), icon: FileText },
+    { id: 'dailyInventory', label: t('dailyInventory'), icon: TrendingUp },
     { id: 'shipments', label: t('shipments'), icon: Truck }
   ];
 
   return (
-    <div className={`w-64 h-[100%] ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg flex flex-col`}>
+    <div className={`w-64 min-h-screen ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg flex flex-col`} style={{minHeight: '100vh'}}>
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
           {menuItems.map((item) => {

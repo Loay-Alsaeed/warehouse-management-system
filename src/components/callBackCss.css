@@ -9,6 +9,15 @@
   margin: auto;
 }
 
+
+html.dark {
+  background-color: #598de1;
+}
+
+div div.flex.min-h-screen {
+  min-height: 100vh;
+}
+
 /* الوضع الداكن */
 .app-container.dark {
   background-color: #111827; /* bg-gray-900 */
