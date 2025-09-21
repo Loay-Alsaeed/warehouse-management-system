@@ -13,7 +13,9 @@ import {
   User,
   Calendar,
   Save,
-  Eye
+  Eye,
+  Check,
+  Minus
 } from 'lucide-react';
 import { db } from '../firebase';
 import { 
@@ -29,6 +31,7 @@ import {
 } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
 import ConfirmationModal from './ConfirmationModal';
+import { dir } from 'i18next';
 
 const Shipments = () => {
   const [shipments, setShipments] = useState([]);
@@ -44,6 +47,25 @@ const Shipments = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [shipmentToDelete, setShipmentToDelete] = useState(null);
+  const [showProductSelectionModal, setShowProductSelectionModal] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [productQuantities, setProductQuantities] = useState({});
+  const [filteredProductsInModal, setFilteredProductsInModal] = useState([]);
+  const [productSearchTerm, setProductSearchTerm] = useState('');
+  const [productFilterCategory, setProductFilterCategory] = useState('all');
+  const [productFilterType, setProductFilterType] = useState('all'); // all, selected, unselected
+  const [showAddProductInModal, setShowAddProductInModal] = useState(false);
+  const [newProductInModal, setNewProductInModal] = useState({
+    name: '',
+    description: '',
+    storageLocation: '',
+    quantity: '',
+    price: '',
+    category: '',
+    partNumber: '',
+    brandName: '',
+    cost: ''
+  });
   const { t, i18n } = useTranslation();
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
@@ -92,6 +114,12 @@ const Shipments = () => {
   useEffect(() => {
     calculateShipmentTotal();
   }, [newShipment.items]);
+
+  useEffect(() => {
+    filterProductsInModal();
+  }, [products, productSearchTerm, productFilterCategory, productFilterType, selectedProducts]);
+
+
 
   const fetchShipments = async () => {
     try {
@@ -251,11 +279,16 @@ const Shipments = () => {
       return;
     }
 
+    // البحث عن المنتج للحصول على ID
+    const product = products.find(p => p.name.toLowerCase() === newItem.productName.toLowerCase());
+    const productId = product ? product.id : null;
+
     const total = newItem.quantity * newItem.price;
     setNewShipment(prev => ({
       ...prev,
       items: [...prev.items, { 
         ...newItem, 
+        productId: productId, // إضافة ID المنتج
         total: Math.round(total * 100) / 100 
       }]
     }));
@@ -448,12 +481,220 @@ const Shipments = () => {
     setShowViewModal(true);
   };
 
+  const filterProductsInModal = () => {
+    let filtered = products;
+
+    // Filter by search term
+    if (productSearchTerm) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+        (product.partNumber && product.partNumber.toLowerCase().includes(productSearchTerm.toLowerCase())) ||
+        (product.brandName && product.brandName.toLowerCase().includes(productSearchTerm.toLowerCase()))
+      );
+    }
+
+    // Filter by category
+    if (productFilterCategory !== 'all') {
+      filtered = filtered.filter(product => product.category === productFilterCategory);
+    }
+
+    // Filter by selection status
+    if (productFilterType === 'selected') {
+      filtered = filtered.filter(product => selectedProducts.some(p => p.id === product.id));
+    } else if (productFilterType === 'unselected') {
+      filtered = filtered.filter(product => !selectedProducts.some(p => p.id === product.id));
+    }
+
+    setFilteredProductsInModal(filtered);
+  };
+
+  const openProductSelectionModal = () => {
+    setShowProductSelectionModal(true);
+    setProductSearchTerm('');
+    setProductFilterCategory('all');
+    setProductFilterType('all');
+    
+    // أخذ المنتجات المختارة من عناصر الشحنة الحالية
+    const currentSelectedProducts = [];
+    const currentProductQuantities = {};
+    
+    newShipment.items.forEach(item => {
+      // البحث عن المنتج باستخدام ID أولاً، ثم الاسم كبديل
+      let product;
+      if (item.productId) {
+        product = products.find(p => p.id === item.productId);
+      } else {
+        // للعناصر القديمة التي لا تحتوي على productId
+        product = products.find(p => p.name.toLowerCase() === item.productName.toLowerCase());
+      }
+      
+      if (product) {
+        currentSelectedProducts.push(product);
+        currentProductQuantities[product.id] = item.quantity;
+      }
+    });
+    
+    setSelectedProducts(currentSelectedProducts);
+    setProductQuantities(currentProductQuantities);
+    
+    filterProductsInModal();
+  };
+
+  const closeProductSelectionModal = () => {
+    setShowProductSelectionModal(false);
+    // لا نمسح المنتجات المختارة والكميات - ستأخذ من الشحنة عند الفتح التالي
+    setProductSearchTerm('');
+    setProductFilterCategory('all');
+    setProductFilterType('all');
+    setShowAddProductInModal(false);
+    setNewProductInModal({
+      name: '',
+      description: '',
+      storageLocation: '',
+      quantity: '',
+      price: '',
+      category: '',
+      partNumber: '',
+      brandName: '',
+      cost: ''
+    });
+  };
+
+  const clearSelectedProducts = () => {
+    setSelectedProducts([]);
+    setProductQuantities({});
+    // مسح عناصر الشحنة أيضاً عند مسح المنتجات المختارة
+    setNewShipment(prev => ({
+      ...prev,
+      items: []
+    }));
+  };
+
+  const toggleProductSelection = (product) => {
+    const isSelected = selectedProducts.some(p => p.id === product.id);
+    
+    if (isSelected) {
+      setSelectedProducts(selectedProducts.filter(p => p.id !== product.id));
+      const newQuantities = { ...productQuantities };
+      delete newQuantities[product.id];
+      setProductQuantities(newQuantities);
+    } else {
+      setSelectedProducts([...selectedProducts, product]);
+      setProductQuantities({
+        ...productQuantities,
+        [product.id]: 1
+      });
+    }
+  };
+
+  const updateProductQuantity = (productId, quantity) => {
+    const newQuantity = Math.max(1, parseInt(quantity) || 1);
+    setProductQuantities({
+      ...productQuantities,
+      [productId]: newQuantity
+    });
+  };
+
+  const increaseQuantity = (productId) => {
+    const currentQuantity = productQuantities[productId] || 1;
+    updateProductQuantity(productId, currentQuantity + 1);
+  };
+
+  const decreaseQuantity = (productId) => {
+    const currentQuantity = productQuantities[productId] || 1;
+    if (currentQuantity > 1) {
+      updateProductQuantity(productId, currentQuantity - 1);
+    }
+  };
+
+  const addSelectedProductsToShipment = () => {
+    const newItems = selectedProducts.map(product => ({
+      productId: product.id, // إضافة ID المنتج
+      productName: product.name,
+      quantity: productQuantities[product.id] || 1,
+      price: parseFloat(product.price) || 0,
+      total: (productQuantities[product.id] || 1) * (parseFloat(product.price) || 0),
+      isNewProduct: false
+    }));
+
+    // استبدال جميع عناصر الشحنة بالمنتجات المختارة الجديدة
+    setNewShipment(prev => ({
+      ...prev,
+      items: newItems
+    }));
+
+    closeProductSelectionModal();
+    // لا نمسح المنتجات المختارة هنا - نتركها للاستخدام المستقبلي
+    success(t('productsAdded'), t('productsAddedToShipment'));
+  };
+
+  const handleAddNewProductInModal = async () => {
+    try {
+      const productData = {
+        ...newProductInModal,
+        quantity: parseInt(newProductInModal.quantity),
+        price: parseFloat(newProductInModal.price),
+        cost: parseFloat(newProductInModal.cost) || 0,
+        createdAt: new Date()
+      };
+
+      const docRef = await addDoc(collection(db, 'products'), productData);
+      const newProductWithId = { id: docRef.id, ...productData };
+      
+      // Add to products list
+      setProducts(prev => [...prev, newProductWithId]);
+      
+      // Auto-select the new product
+      setSelectedProducts(prev => [...prev, newProductWithId]);
+      setProductQuantities(prev => ({
+        ...prev,
+        [docRef.id]: 1
+      }));
+
+      // إضافة المنتج الجديد للشحنة مباشرة
+      const newItem = {
+        productId: newProductWithId.id, // إضافة ID المنتج
+        productName: newProductWithId.name,
+        quantity: 1,
+        price: parseFloat(newProductWithId.price) || 0,
+        total: parseFloat(newProductWithId.price) || 0,
+        isNewProduct: false
+      };
+
+      setNewShipment(prev => ({
+        ...prev,
+        items: [...prev.items, newItem]
+      }));
+
+      // Reset form
+      setNewProductInModal({
+        name: '',
+        description: '',
+        storageLocation: '',
+        quantity: '',
+        price: '',
+        category: '',
+        partNumber: '',
+        brandName: '',
+        cost: ''
+      });
+      
+      setShowAddProductInModal(false);
+      success(t('productAdded'), t('productAddedAndSelected'));
+    } catch (error) {
+      console.error('Error adding product:', error);
+      showError(t('error'), t('productAddError'));
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner page="shipments" />;
   }
 
   return (
-    <div className={`h-[100%] w-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+    <div className={` relative h-[100%] w-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-4">{t('shipments')}</h1>
@@ -645,175 +886,168 @@ const Shipments = () => {
                 </div>
               </div>
 
-              {/* Supplier Details Display */}
-              {newShipment.supplierName && (
-                <div className={`p-4 rounded-lg mb-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                  <h3 className="font-medium mb-2">{t('supplierDetails')}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div><strong>{t('supplierName')}:</strong> {newShipment.supplierName}</div>
-                  </div>
-                </div>
-              )}
 
               {/* Items Section */}
               <div className="mb-6">
-                <h3 className="font-medium mb-4">{t('items')}</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-medium">{t('items')} ({newShipment.items.length})</h3>
+                  <button
+                    onClick={openProductSelectionModal}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  >
+                    <Package size={16} />
+                    {t('selectProducts')}
+                  </button>
+                </div>
                 {validationErrors.items && (
                   <p className="text-red-500 text-sm mb-2">{validationErrors.items}</p>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder={t('productName')}
-                      value={newItem.productName}
-                      onChange={(e) => handleProductNameChange(e.target.value)}
-                      onFocus={() => {
-                        if (newItem.productName.trim() !== '') {
-                          handleProductNameChange(newItem.productName);
-                        }
-                      }}
-                      className={`px-3 py-2 border rounded w-full ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      } ${validationErrors.productName ? 'border-red-500' : ''}`}
-                    />
-                    {validationErrors.productName && (
-                      <p className="text-red-500 text-xs mt-1">{validationErrors.productName}</p>
-                    )}
-                    {/* Product Suggestions Dropdown */}
-                    {showSuggestions && productSuggestions.length > 0 && (
-                      <div className={`absolute z-10 w-full mt-1 border rounded-lg shadow-lg max-h-48 overflow-y-auto ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                      }`}>
-                        {productSuggestions.map((product, index) => (
-                          <div
-                            key={product.id}
-                            onClick={() => handleProductSelect(product)}
-                            className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                              darkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'
-                            } ${index === 0 ? 'rounded-t-lg' : ''} ${index === productSuggestions.length - 1 ? 'rounded-b-lg' : ''}`}
-                          >
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-gray-500">{formatNumber(product.price)} JOD</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="number"
-                      placeholder={t('quantity')}
-                      value={newItem.quantity}
-                      min="1"
-                      onChange={(e) => {
-                        const quantity = parseInt(e.target.value) || 0;
-                        setNewItem({
-                          ...newItem,
-                          quantity,
-                          total: quantity * newItem.price
-                        });
-                      }}
-                      className={`px-3 py-2 border rounded w-full ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      } ${validationErrors.quantity ? 'border-red-500' : ''}`}
-                    />
-                    {validationErrors.quantity && (
-                      <p className="text-red-500 text-xs mt-1">{validationErrors.quantity}</p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder={t('price')}
-                      value={newItem.price}
-                      onChange={(e) => {
-                        const price = parseFloat(e.target.value) || 0;
-                        setNewItem({
-                          ...newItem,
-                          price,
-                          total: newItem.quantity * price
-                        });
-                      }}
-                      className={`px-3 py-2 border rounded w-full ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      } ${validationErrors.price ? 'border-red-500' : ''}`}
-                    />
-                    {validationErrors.price && (
-                      <p className="text-red-500 text-xs mt-1">{validationErrors.price}</p>
-                    )}
-                  </div>
-                  <div className="flex items-center">
-                    <label className="flex items-center text-sm">
-                      <input
-                        type="checkbox"
-                        checked={newItem.isNewProduct}
-                        onChange={(e) => setNewItem({...newItem, isNewProduct: e.target.checked})}
-                        className="mr-2"
-                      />
-                      {t('newProduct')}
-                    </label>
-                  </div>
-                  <button
-                    onClick={addItemToShipment}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                  >
-                    {t('addItem')}
-                  </button>
-                </div>
+               
 
-                {/* Items List */}
-                {newShipment.items.length > 0 && (
-                  <div className={`border rounded-lg p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                    <h4 className="font-medium mb-2">{t('selectedItems')}</h4>
-                    {newShipment.items.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
-                        <span>{item.productName}</span>
-                        <div className="flex items-center gap-4">
-                          <input
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => updateItemQuantity(index, e.target.value)}
-                            className={`w-20 px-2 py-1 border rounded ${
-                              darkMode ? 'bg-gray-600 border-gray-500 text-white' : 'bg-white border-gray-300'
-                            }`}
-                          />
-                          <span>{formatNumber(item.price)} JOD</span>
-                          <span className="font-medium">{formatNumber(item.total)} JOD</span>
-                          {item.isNewProduct && (
-                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                              {t('new')}
-                            </span>
-                          )}
-                          <button
-                            onClick={() => removeItemFromShipment(index)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
+                {/* Items Table */}
+                <div className={`border rounded-lg overflow-hidden ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                  {/* <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+                    <h4 className="font-medium">{t('selectedItems')} ({newShipment.items.length})</h4>
+                  </div> */}
+                  
+                  {newShipment.items.length > 0 ? (
+                    <>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className={`${darkMode ? 'bg-gray-500 text-white' : 'bg-gray-100'} text-center text-gray-500`}>
+                            <tr>
+                            <th className="px-4 py-3 text-center text-xs font-medium  dark:text-gray-400 uppercase tracking-wider">
+                                {t('actions')}
+                              </th>
+                              <th className="px-4 py-3 text-center text-left text-xs font-medium dark:text-gray-400 uppercase tracking-wider">
+                                {t('productName')}
+                              </th>
+                              
+                              <th className="px-4 py-3 text-center text-left text-xs font-medium dark:text-gray-400 uppercase tracking-wider">
+                                {t('price')}
+                              </th>
+                              <th className="px-4 py-3 text-center text-left text-xs font-medium dark:text-gray-400 uppercase tracking-wider">
+                                {t('total')}
+                              </th>
+                              <th className="px-4 py-3 text-center text-left text-xs font-medium dark:text-gray-400 uppercase tracking-wider">
+                                {t('quantity')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className={`divide-y ${darkMode ? 'bg-gray-800 text-white' : 'divide-gray-200 text-gray-500'} text-center`}>
+                            {newShipment.items.map((item, index) => (
+                              <tr key={index} className={`hover:${darkMode ? 'bg-gray-600' : 'bg-gray-50'} text-center`}>
+                                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-center bg-transparent">
+                                  <button
+                                    onClick={() => removeItemFromShipment(index)}
+                                    className="bg-transparent text-red-500 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
+                                </td>
+                                <td className="px-4 py-2 whitespace-nowrap text-center">
+                                  <div className="flex justify-center align-center text-center">
+                                    <div>
+                                      <div className="text-sm font-medium  dark:text-white">
+                                        {item.productName}
+                                      </div>
+                                      {item.isNewProduct && (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                                          {t('new')}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </td>
+                                
+                                <td className="px-4 py-2 whitespace-nowrap text-sm  text-center">
+                                  {formatNumber(item.price)} JOD
+                                </td>
+                                <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-center">
+                                  {formatNumber(item.total)} JOD
+                                </td>
+                                
+                                <td className="px-4 py-2 whitespace-nowrap ">
+                                  <div className="flex justify-center align-center   space-x-2">
+                                    <button
+                                      onClick={() => updateItemQuantity(index, Math.max(1, item.quantity - 1))}
+                                      className="p-1 rounded-full bg-red-500 text-white  dark:hover:bg-gray-600"
+                                      disabled={item.quantity <= 1}
+                                    >
+                                      <Minus size={16} />
+                                    </button>
+                                    <input
+                                      type="number"
+                                      value={item.quantity}
+                                      onChange={(e) => updateItemQuantity(index, e.target.value)}
+                                      className={`w-16 px-2 py-1 text-center border rounded  ${
+                                        darkMode ? 'bg-gray-600 border-gray-500 text-white' : 'bg-white border-gray-300'
+                                      }`}
+                                      min="1"
+                                    />
+                                    <button
+                                      onClick={() => updateItemQuantity(index, item.quantity + 1)}
+                                      className="p-1 rounded-full bg-green-500 text-white dark:hover:bg-gray-600"
+                                    >
+                                      <Plus size={16} />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          <tfoot className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-500'} border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                            <tr>
+                              <td colSpan="3" className="px-4 py-3  text-right text-sm font-medium">
+                                {t('totalAmount')}:
+                              </td>
+                              <td className="px-2 py-3   "></td>
+                              <td className="px-4 py-3 text-sm font-bold  text-center">
+                                {formatNumber(newShipment.totalAmount)} JOD
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </>
+                  ) : (
+                    <div className="px-4 py-8 text-center">
+                      <p className="py-2 text-gray-400 dark:text-gray-400">{t('noItemsSelected')}</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Shipment Summary */}
-              <div className={`border rounded-lg p-4 mb-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+              {/* <div className={`border rounded-lg p-4 mb-6 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
                 <h3 className="font-medium mb-4">{t('shipmentSummary')}</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between font-bold text-lg">
-                    <span>{t('totalAmount')}:</span>
-                    <span>{formatNumber(newShipment.totalAmount)} JOD</span>
+                  <div className="flex justify-between">
+                    <span>{t('shipmentNumber')}:</span>
+                    <span className="font-medium">{newShipment.shipmentNumber}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t('supplier')}:</span>
+                    <span className="font-medium">{newShipment.supplierName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t('shipmentDate')}:</span>
+                    <span className="font-medium">{newShipment.shipmentDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t('itemsCount')}:</span>
+                    <span className="font-medium">{newShipment.items.length}</span>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Action Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 relative bottom-0 left-0 right-0 w-full p-4">
                 <button
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => {
+                    setShowAddModal(false);
+                    clearSelectedProducts(); // مسح المنتجات المختارة عند إلغاء الشحنة
+                  }}
                   className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
                 >
                   {t('cancel')}
@@ -830,6 +1064,395 @@ const Shipments = () => {
             </div>
           </div>
         )}
+
+        {/* Product Selection Modal */}
+        {showProductSelectionModal && (
+          <div className='fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto'>
+
+          
+          <div className="fixed inset-0 h-full my-4 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+            <div className={`p-6 rounded-lg w-full max-w-7xl h-full max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold">{t('selectProducts')}</h2>
+                <button
+                  onClick={closeProductSelectionModal}
+                  className="text-red-500 hover:text-gray-700 bg-transparent font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              
+              <div className="flex gap-4 ">
+
+              {/* Add Product Button */}
+              <div className="mb-4">
+                <button
+                  onClick={() => setShowAddProductInModal(true)}
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+                  >
+                  <Plus size={20} />
+                  {t('addProduct')}
+                </button>
+              </div>
+              {/* Clear All Button */}
+                <div className="mb-4">
+                  <button
+                    onClick={clearSelectedProducts}
+                    className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600 flex items-center gap-2"
+                  >
+                    <Trash2 size={16} />
+                    {t('clearAll')} ({selectedProducts.length})
+                  </button>
+                </div>
+              </div>
+
+              {/* Search and Filter Controls */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder={t('search')}
+                    value={productSearchTerm}
+                    onChange={(e) => setProductSearchTerm(e.target.value)}
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
+                      darkMode 
+                        ? 'bg-gray-800 border-gray-600 text-white' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                  />
+                </div>
+
+                <select
+                  value={productFilterCategory}
+                  onChange={(e) => setProductFilterCategory(e.target.value)}
+                  className={`px-4 py-2 border rounded-lg ${
+                    darkMode 
+                      ? 'bg-gray-800 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                >
+                  <option value="all">{t('allCategories')}</option>
+                  {[...new Set(products.map(p => p.category).filter(Boolean))].map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={productFilterType}
+                  onChange={(e) => setProductFilterType(e.target.value)}
+                  className={`px-4 py-2 border rounded-lg ${
+                    darkMode 
+                      ? 'bg-gray-800 border-gray-600 text-white' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                >
+                  <option value="all">{t('allProducts')}</option>
+                  <option value="selected">{t('selectedProducts')} ({selectedProducts.length})</option>
+                  <option value="unselected">{t('unselectedProducts')}</option>
+                </select>
+              </div>
+              {/* Products Table */}
+              <div className={`overflow-x-auto rounded-lg shadow-lg mb-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+                <table className="w-full">
+                  <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                    <tr>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('select')}
+                      </th>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('productName')}
+                      </th>
+                      <th className={`px-4 py-3 text-center text-xs font-medium uppercase tracking-wider w-48 ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('description')}
+                      </th>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('category')}
+                      </th>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('price')}
+                      </th>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('available')}
+                      </th>
+                      <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                        darkMode ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {t('quantity')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+                    {filteredProductsInModal.map((product) => {
+                      const isSelected = selectedProducts.some(p => p.id === product.id);
+                      const quantity = productQuantities[product.id] || 1;
+                      
+                      return (
+                        <tr key={product.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            <button
+                              onClick={() => toggleProductSelection(product)}
+                              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
+                                isSelected 
+                                  ? 'bg-green-600 border-green-600 text-white' 
+                                  : `border-gray-300 ${darkMode ? 'hover:border-gray-500' : 'hover:border-gray-400'}`
+                              }`}
+                            >
+                              {isSelected && <Check size={14} />}
+                            </button>
+                          </td>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            <div className="text-sm font-medium">{product.name}</div>
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <div 
+                              className="text-sm w-48 truncate cursor-help" 
+                              title={product.description}
+                            >
+                              {product.description}
+                            </div>
+                          </td>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            <div className="text-sm">{product.category}</div>
+                          </td>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            <div className="text-sm">{product.price} JOD</div>
+                          </td>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            <span className={`text-sm font-medium ${
+                              parseInt(product.quantity) > 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {parseInt(product.quantity) > 0 ? t('available') : t('unavailable')}
+                            </span>
+                          </td>
+                          <td className="px-6 py-2 whitespace-nowrap text-center">
+                            {isSelected && (
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  onClick={() => decreaseQuantity(product.id)}
+                                  className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600"
+                                  disabled={quantity <= 1}
+                                >
+                                  <Minus size={14} />
+                                </button>
+                                <input
+                                  type="number"
+                                  value={quantity}
+                                  onChange={(e) => updateProductQuantity(product.id, e.target.value)}
+                                  className={`w-16 px-2 py-1 border rounded text-center ${
+                                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                                  }`}
+                                  min="1"
+                                />
+                                <button
+                                  onClick={() => increaseQuantity(product.id)}
+                                  className="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-600"
+                                >
+                                  <Plus size={14} />
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+
+                {filteredProductsInModal.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-xl text-gray-500">{t('noProducts')}</p>
+                  </div>
+                )}
+              </div>
+
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={closeProductSelectionModal}
+                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  onClick={addSelectedProductsToShipment}
+                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center justify-center gap-2"
+                  disabled={selectedProducts.length === 0}
+                >
+                  <Check size={16} />
+                  {t('addSelectedProducts')} ({selectedProducts.length})
+                </button>
+              </div>
+            </div>
+
+{/* Add Product in Modal */}
+        {showAddProductInModal && (
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-[70]">
+            <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">{t('addProduct')}</h2>
+                <button
+                  onClick={() => {
+                    setShowAddProductInModal(false);
+                    setNewProductInModal({
+                      name: '',
+                      description: '',
+                      storageLocation: '',
+                      quantity: '',
+                      price: '',
+                      category: '',
+                      partNumber: '',
+                      brandName: '',
+                      cost: ''
+                    });
+                  }}
+                  className="text-gray-500 hover:text-gray-700 text-2xl bg-transparent"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder={t('productName')}
+                  value={newProductInModal.name}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, name: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <textarea
+                  placeholder={t('description')}
+                  value={newProductInModal.description}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, description: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                  rows="3"
+                />
+                <input
+                  type="text"
+                  placeholder={t('category')}
+                  value={newProductInModal.category}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, category: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                  list="modalCategories"
+                />
+                <datalist id="modalCategories">
+                  {[...new Set(products.map(p => p.category).filter(Boolean))].map((category) => (
+                    <option key={category} value={category} />
+                  ))}
+                </datalist>
+                <input
+                  type="text"
+                  placeholder={t('partNumber')}
+                  value={newProductInModal.partNumber}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, partNumber: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="text"
+                  placeholder={t('brandName')}
+                  value={newProductInModal.brandName}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, brandName: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="text"
+                  placeholder={t('storageLocation')}
+                  value={newProductInModal.storageLocation}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, storageLocation: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="number"
+                  placeholder={t('quantity')}
+                  value={newProductInModal.quantity}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, quantity: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder={t('cost')}
+                  value={newProductInModal.cost}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, cost: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder={t('price')}
+                  value={newProductInModal.price}
+                  onChange={(e) => setNewProductInModal({...newProductInModal, price: e.target.value})}
+                  className={`w-full px-3 py-2 border rounded ${
+                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                  }`}
+                />
+              </div>
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={() => {
+                    setShowAddProductInModal(false);
+                    setNewProductInModal({
+                      name: '',
+                      description: '',
+                      storageLocation: '',
+                      quantity: '',
+                      price: '',
+                      category: '',
+                      partNumber: '',
+                      brandName: '',
+                      cost: ''
+                    });
+                  }}
+                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  onClick={handleAddNewProductInModal}
+                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  disabled={!newProductInModal.name || !newProductInModal.category || !newProductInModal.quantity || !newProductInModal.price}
+                >
+                  {t('save')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+          </div>
+          </div>
+        )}
+
+        
 
         {/* View Shipment Modal */}
         {showViewModal && viewingShipment && (

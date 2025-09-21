@@ -39,7 +39,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex min-h-screen" style={{minHeight: '100vh'}} dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className=" flex min-h-screen" style={{minHeight: '100vh', overflow: 'auto'}} dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       <Sidebar activePage={activePage} onPageChange={setActivePage} />
       <div className="flex-1 flex flex-col">
         <Header />
