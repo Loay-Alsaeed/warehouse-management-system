@@ -1,5 +1,5 @@
-/* @import "./fallback.css"; */
 @import "tailwindcss";
+/* @import "./fallback.css"; */
 
 
 @theme inline {

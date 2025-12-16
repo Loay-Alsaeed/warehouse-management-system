@@ -76,6 +76,21 @@ export default function AddInvoiceModal({
     phone: ''
   });
 
+  // New product form state
+  const [showNewProductForm, setShowNewProductForm] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    storageLocation: '',
+    quantity: '',
+    price: '',
+    category: '',
+    partNumber: '',
+    brandName: '',
+    cost: ''
+  });
+  const [categories, setCategories] = useState([]);
+
   // Calculate invoice total whenever products, services, or discount changes
   useEffect(() => {
     calculateInvoiceTotal();
@@ -422,6 +437,99 @@ export default function AddInvoiceModal({
     }
   };
 
+  // Handle form submit for new product
+  const handleProductFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  // Handle Enter key to move to next input in product form
+  const handleProductKeyDown = (e, formId) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      const form = document.getElementById(formId);
+      if (form) {
+        const inputs = Array.from(form.querySelectorAll('input:not([type="submit"]):not([type="button"]), textarea, select'));
+        const currentIndex = inputs.indexOf(e.target);
+        
+        if (currentIndex < inputs.length - 1) {
+          e.preventDefault();
+          inputs[currentIndex + 1].focus();
+        }
+      }
+    }
+  };
+
+  const handleAddNewProduct = async () => {
+    if (!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price) {
+      showError(t('error'), t('fillRequiredFields') || 'Please fill all required fields');
+      return;
+    }
+
+    try {
+      const productData = {
+        ...newProduct,
+        quantity: parseInt(newProduct.quantity) || 0,
+        price: parseFloat(newProduct.price) || 0,
+        cost: parseFloat(newProduct.cost) || 0,
+        available: (parseInt(newProduct.quantity) || 0) > 0,
+        createdAt: new Date()
+      };
+
+      const docRef = await addDoc(collection(db, 'products'), productData);
+      
+      // Reset form
+      setShowNewProductForm(false);
+      setNewProduct({
+        name: '',
+        description: '',
+        storageLocation: '',
+        quantity: '',
+        price: '',
+        category: '',
+        partNumber: '',
+        brandName: '',
+        cost: ''
+      });
+
+      success(t('productAdded') || 'Success', t('productAddedMessage') || 'Product added successfully');
+      
+      // Add to invoice automatically
+      const productToAdd = {
+        productId: docRef.id,
+        productName: productData.name,
+        quantity: 1,
+        price: productData.price,
+        total: productData.price,
+        maxQuantity: productData.quantity
+      };
+
+      setNewInvoice(prev => {
+        const newProducts = [...prev.products, productToAdd];
+        const newIndex = newProducts.length - 1;
+        
+        // Set editing mode for the newly added product after state update
+        setTimeout(() => {
+          setEditingProductIndex(newIndex);
+          setTimeout(() => {
+            if (quantityInputRefs.current[newIndex]) {
+              quantityInputRefs.current[newIndex].focus();
+              quantityInputRefs.current[newIndex].select();
+            }
+          }, 50);
+        }, 150);
+        
+        return { ...prev, products: newProducts };
+      });
+
+      // Refresh products list by calling callback if provided
+      if (onInvoiceAdded) {
+        onInvoiceAdded();
+      }
+    } catch (err) {
+      console.error('Error adding product:', err);
+      showError(t('error'), t('productAddError') || 'Failed to add product');
+    }
+  };
+
   const generateInvoiceNumber = () => {
     const date = new Date();
     const year = date.getFullYear();
@@ -671,7 +779,10 @@ export default function AddInvoiceModal({
                     <section className="bg-card border border-border rounded-xl p-6 space-y-5">
                         <div className="flex items-center justify-between pb-4 border-b border-border">
                             <h2 className="text-lg font-semibold font-heading">Products & Services</h2>
-                            <button className="flex items-center gap-2 text-[#10b981] bg-[#10b981]/10 px-4 py-2 rounded-lg text-sm font-medium border border-[#10b981]/20 hover:bg-[#10b981]/20 transition-colors">
+                            <button 
+                              onClick={() => setShowNewProductForm(true)}
+                              className="flex items-center gap-2 text-[#10b981] bg-[#10b981]/10 px-4 py-2 rounded-lg text-sm font-medium border border-[#10b981]/20 hover:bg-[#10b981]/20 transition-colors"
+                            >
                                 <Icon icon="solar:box-bold" className="size-4" />
                                 New Products
                             </button>
@@ -1080,6 +1191,133 @@ export default function AddInvoiceModal({
                   {t('save')}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add New Product Modal */}
+        {showNewProductForm && (
+          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+            <div className={`p-6 rounded-lg w-full max-w-md my-4 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <h2 className="text-xl font-bold mb-4">{t('addProduct')}</h2>
+              <form id="addProductFormInInvoice" onSubmit={handleProductFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('productName')}
+                    value={newProduct.name}
+                    onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <textarea
+                    placeholder={t('description')}
+                    value={newProduct.description}
+                    onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    rows="3"
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('category')}
+                    value={newProduct.category}
+                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    list="categoriesInInvoice"
+                  />
+                  <datalist id="categoriesInInvoice">
+                    {categories.map((category) => (
+                      <option key={category} value={category} />
+                    ))}
+                  </datalist>
+                  <input
+                    type="text"
+                    placeholder={t('partNumber')}
+                    value={newProduct.partNumber}
+                    onChange={(e) => setNewProduct({...newProduct, partNumber: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('brandName')}
+                    value={newProduct.brandName}
+                    onChange={(e) => setNewProduct({...newProduct, brandName: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('storageLocation')}
+                    value={newProduct.storageLocation}
+                    onChange={(e) => setNewProduct({...newProduct, storageLocation: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder={t('quantity')}
+                    value={newProduct.quantity}
+                    onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder={t('cost')}
+                    value={newProduct.cost}
+                    onChange={(e) => setNewProduct({...newProduct, cost: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder={t('price')}
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                    onKeyDown={(e) => handleProductKeyDown(e, 'addProductFormInInvoice')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewProductForm(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleAddNewProduct}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                    disabled={!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price}
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

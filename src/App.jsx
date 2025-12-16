@@ -6,7 +6,6 @@ import NotificationProvider from './components/NotificationSystem';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 import './i18n';
-import { AddInvoice } from './components/AddInvoice';
 
 function App() {
   return (
@@ -25,7 +24,6 @@ function App() {
                     </PrivateRoute>
                   } 
                 />
-              <Route path='/addinvoice' element={<AddInvoice/>}/>
               </Routes>
             </div>
           </AuthProvider>
