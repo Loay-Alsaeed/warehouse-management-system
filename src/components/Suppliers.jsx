@@ -44,6 +44,11 @@ const Suppliers = () => {
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
 
+  // Handle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
   const [newSupplier, setNewSupplier] = useState({
     companyName: '',
     contactPerson: '',
@@ -339,60 +344,63 @@ const Suppliers = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addSupplier')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('companyName')}
-                  value={newSupplier.companyName}
-                  onChange={(e) => setNewSupplier({...newSupplier, companyName: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('contactPerson')}
-                  value={newSupplier.contactPerson}
-                  onChange={(e) => setNewSupplier({...newSupplier, contactPerson: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="tel"
-                  placeholder={t('phone')}
-                  value={newSupplier.phone}
-                  onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="email"
-                  placeholder={t('email')}
-                  value={newSupplier.email}
-                  onChange={(e) => setNewSupplier({...newSupplier, email: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleAddSupplier}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!newSupplier.companyName || !newSupplier.contactPerson || !newSupplier.phone || !newSupplier.email || loading}
-                  
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('companyName')}
+                    value={newSupplier.companyName}
+                    onChange={(e) => setNewSupplier({...newSupplier, companyName: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('contactPerson')}
+                    value={newSupplier.contactPerson}
+                    onChange={(e) => setNewSupplier({...newSupplier, contactPerson: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="tel"
+                    placeholder={t('phone')}
+                    value={newSupplier.phone}
+                    onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="email"
+                    placeholder={t('email')}
+                    value={newSupplier.email}
+                    onChange={(e) => setNewSupplier({...newSupplier, email: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleAddSupplier}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!newSupplier.companyName || !newSupplier.contactPerson || !newSupplier.phone || !newSupplier.email || loading}
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -402,58 +410,62 @@ const Suppliers = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editSupplier')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('companyName')}
-                  value={editingSupplier.companyName}
-                  onChange={(e) => setEditingSupplier({...editingSupplier, companyName: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('contactPerson')}
-                  value={editingSupplier.contactPerson}
-                  onChange={(e) => setEditingSupplier({...editingSupplier, contactPerson: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="tel"
-                  placeholder={t('phone')}
-                  value={editingSupplier.phone}
-                  onChange={(e) => setEditingSupplier({...editingSupplier, phone: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="email"
-                  placeholder={t('email')}
-                  value={editingSupplier.email}
-                  onChange={(e) => setEditingSupplier({...editingSupplier, email: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleEditSupplier}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('companyName')}
+                    value={editingSupplier.companyName}
+                    onChange={(e) => setEditingSupplier({...editingSupplier, companyName: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('contactPerson')}
+                    value={editingSupplier.contactPerson}
+                    onChange={(e) => setEditingSupplier({...editingSupplier, contactPerson: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="tel"
+                    placeholder={t('phone')}
+                    value={editingSupplier.phone}
+                    onChange={(e) => setEditingSupplier({...editingSupplier, phone: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="email"
+                    placeholder={t('email')}
+                    value={editingSupplier.email}
+                    onChange={(e) => setEditingSupplier({...editingSupplier, email: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleEditSupplier}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

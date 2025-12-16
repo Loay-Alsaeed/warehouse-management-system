@@ -1,6 +1,3 @@
-/* @import "./fallback.css"; */
-@import "tailwindcss";
-
 
 @theme inline {
     --color-background: var(--background);

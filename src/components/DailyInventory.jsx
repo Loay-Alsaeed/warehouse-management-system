@@ -317,7 +317,7 @@ const DailyInventory = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1  gap-8 mb-8">
           {/* Top Products */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -329,8 +329,8 @@ const DailyInventory = () => {
             {dailyData.topProducts.length > 0 ? (
               <div className="space-y-3">
                 {dailyData.topProducts.map((product, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-gray-400 dark:bg-gray-700 rounded">
-                    <div>
+                  <div key={index} className="flex justify-between items-center p-3  dark:bg-gray-700 rounded">
+                    <div className='flex gap-4'>
                       <p className="font-medium">{product.name}</p>
                       <p className="text-sm text-gray-500">{t('quantity')}: {product.quantity}</p>
                     </div>
@@ -356,8 +356,8 @@ const DailyInventory = () => {
             {dailyData.topServices.length > 0 ? (
               <div className="space-y-3 px-4" >
                 {dailyData.topServices.map((service, index) => (
-                  <div key={index} className="flex justify-between items-center p-3 bg-gray-500 dark:bg-gray-700 rounded">
-                    <div>
+                  <div key={index} className="flex justify-between items-center p-3  dark:bg-gray-700 rounded">
+                    <div className='flex gap-4'>
                       <p className="font-medium">{service.name}</p>
                       <p className="text-sm text-gray-500">{t('count')}: {service.count}</p>
                     </div>

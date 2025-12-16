@@ -41,6 +41,11 @@ const Services = () => {
   const { darkMode } = useTheme();
   const { success, error: showError, warning } = useNotifications();
 
+  // Handle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
   const [newService, setNewService] = useState({
     name: '',
     notes: '',
@@ -309,51 +314,55 @@ const Services = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addService')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('serviceName')}
-                  value={newService.name}
-                  onChange={(e) => setNewService({...newService, name: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <textarea
-                  placeholder={t('notes')}
-                  value={newService.notes}
-                  onChange={(e) => setNewService({...newService, notes: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  rows="3"
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder={t('price')}
-                  value={newService.price}
-                  onChange={(e) => setNewService({...newService, price: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleAddService}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                  disabled={!newService.name || !newService.price || loading}
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('serviceName')}
+                    value={newService.name}
+                    onChange={(e) => setNewService({...newService, name: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <textarea
+                    placeholder={t('notes')}
+                    value={newService.notes}
+                    onChange={(e) => setNewService({...newService, notes: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    rows="3"
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder={t('price')}
+                    value={newService.price}
+                    onChange={(e) => setNewService({...newService, price: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleAddService}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                    disabled={!newService.name || !newService.price || loading}
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -363,50 +372,54 @@ const Services = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editService')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('serviceName')}
-                  value={editingService.name}
-                  onChange={(e) => setEditingService({...editingService, name: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <textarea
-                  placeholder={t('notes')}
-                  value={editingService.notes || ''}
-                  onChange={(e) => setEditingService({...editingService, notes: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  rows="3"
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder={t('price')}
-                  value={editingService.price}
-                  onChange={(e) => setEditingService({...editingService, price: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleEditService}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('serviceName')}
+                    value={editingService.name}
+                    onChange={(e) => setEditingService({...editingService, name: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <textarea
+                    placeholder={t('notes')}
+                    value={editingService.notes || ''}
+                    onChange={(e) => setEditingService({...editingService, notes: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    rows="3"
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder={t('price')}
+                    value={editingService.price}
+                    onChange={(e) => setEditingService({...editingService, price: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleEditService}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

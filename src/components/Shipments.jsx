@@ -70,6 +70,11 @@ const Shipments = () => {
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
 
+  // Handle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
   const [newShipment, setNewShipment] = useState({
     shipmentNumber: '',
     supplierId: '',
@@ -832,59 +837,59 @@ const Shipments = () => {
           <div className="fixed inset-0 w-full h-full py-4 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
             <div className={`p-6 rounded-lg w-fill-content h-full overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addShipment')}</h2>
-              
-              {/* Shipment Information */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">{t('shipmentInfo')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{t('selectSupplier')}</label>
-                    <select
-                      value={newShipment.supplierId}
-                      onChange={(e) => handleSupplierSelect(e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      } ${validationErrors.supplierId ? 'border-red-500' : ''}`}
-                    >
-                      <option value="">{t('selectSupplier')}</option>
-                      {suppliers.map((supplier) => (
-                        <option key={supplier.id} value={supplier.id}>
-                          {supplier.companyName}
-                        </option>
-                      ))}
-                    </select>
-                    {validationErrors.supplierId && (
-                      <p className="text-red-500 text-sm mt-1">{validationErrors.supplierId}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{t('shipmentDate')}</label>
-                    <input
-                      type="date"
-                      value={newShipment.shipmentDate}
-                      onChange={(e) => setNewShipment({...newShipment, shipmentDate: e.target.value})}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      } ${validationErrors.shipmentDate ? 'border-red-500' : ''}`}
-                    />
-                    {validationErrors.shipmentDate && (
-                      <p className="text-red-500 text-sm mt-1">{validationErrors.shipmentDate}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{t('shipmentNumber')}</label>
-                    <input
-                      type="text"
-                      value={newShipment.shipmentNumber}
-                      onChange={(e) => setNewShipment({...newShipment, shipmentNumber: e.target.value})}
-                      placeholder={t('')}
-                      className={`w-full px-3 py-2 border rounded-lg ${
-                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                      }`}
-                    />
+              <form onSubmit={handleFormSubmit}>
+                {/* Shipment Information */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">{t('shipmentInfo')}</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t('selectSupplier')}</label>
+                      <select
+                        value={newShipment.supplierId}
+                        onChange={(e) => handleSupplierSelect(e.target.value)}
+                        className={`w-full px-3 py-2 border rounded-lg ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        } ${validationErrors.supplierId ? 'border-red-500' : ''}`}
+                      >
+                        <option value="">{t('selectSupplier')}</option>
+                        {suppliers.map((supplier) => (
+                          <option key={supplier.id} value={supplier.id}>
+                            {supplier.companyName}
+                          </option>
+                        ))}
+                      </select>
+                      {validationErrors.supplierId && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.supplierId}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t('shipmentDate')}</label>
+                      <input
+                        type="date"
+                        value={newShipment.shipmentDate}
+                        onChange={(e) => setNewShipment({...newShipment, shipmentDate: e.target.value})}
+                        className={`w-full px-3 py-2 border rounded-lg ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        } ${validationErrors.shipmentDate ? 'border-red-500' : ''}`}
+                      />
+                      {validationErrors.shipmentDate && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.shipmentDate}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t('shipmentNumber')}</label>
+                      <input
+                        type="text"
+                        value={newShipment.shipmentNumber}
+                        onChange={(e) => setNewShipment({...newShipment, shipmentNumber: e.target.value})}
+                        placeholder={t('')}
+                        className={`w-full px-3 py-2 border rounded-lg ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
 
               {/* Items Section */}
@@ -1041,26 +1046,29 @@ const Shipments = () => {
                 </div>
               </div> */}
 
-              {/* Action Buttons */}
-              <div className="flex gap-2 relative bottom-0 left-0 right-0 w-full p-4">
-                <button
-                  onClick={() => {
-                    setShowAddModal(false);
-                    clearSelectedProducts(); // مسح المنتجات المختارة عند إلغاء الشحنة
-                  }}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleAddShipment}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center justify-center gap-2"
-                  disabled={!newShipment.supplierId || !newShipment.shipmentDate || !newShipment.shipmentNumber || !newShipment.items.length || loading}
-                >
-                  <Save size={16} />
-                  {t('saveShipment')}
-                </button>
-              </div>
+                {/* Action Buttons */}
+                <div className="flex gap-2 relative bottom-0 left-0 right-0 w-full p-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      clearSelectedProducts(); // مسح المنتجات المختارة عند إلغاء الشحنة
+                    }}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleAddShipment}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center justify-center gap-2"
+                    disabled={!newShipment.supplierId || !newShipment.shipmentDate || !newShipment.shipmentNumber || !newShipment.items.length || loading}
+                  >
+                    <Save size={16} />
+                    {t('saveShipment')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

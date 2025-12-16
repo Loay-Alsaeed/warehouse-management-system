@@ -43,6 +43,11 @@ const Customers = () => {
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
 
+  // Handle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
   const [newCustomer, setNewCustomer] = useState({
     customerName: '',
     carType: '',
@@ -338,59 +343,63 @@ const Customers = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addCustomer')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('customerName')}
-                  value={newCustomer.customerName}
-                  onChange={(e) => setNewCustomer({...newCustomer, customerName: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('carType')}
-                  value={newCustomer.carType}
-                  onChange={(e) => setNewCustomer({...newCustomer, carType: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('carNumber')}
-                  value={newCustomer.carNumber}
-                  onChange={(e) => setNewCustomer({...newCustomer, carNumber: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="tel"
-                  placeholder={t('phone')}
-                  value={newCustomer.phone}
-                  onChange={(e) => setNewCustomer({...newCustomer, phone: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={loading ? null : handleAddCustomer}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                  disabled={!newCustomer.customerName || !newCustomer.carType || !newCustomer.carNumber || !newCustomer.phone || loading}
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('customerName')}
+                    value={newCustomer.customerName}
+                    onChange={(e) => setNewCustomer({...newCustomer, customerName: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('carType')}
+                    value={newCustomer.carType}
+                    onChange={(e) => setNewCustomer({...newCustomer, carType: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('carNumber')}
+                    value={newCustomer.carNumber}
+                    onChange={(e) => setNewCustomer({...newCustomer, carNumber: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="tel"
+                    placeholder={t('phone')}
+                    value={newCustomer.phone}
+                    onChange={(e) => setNewCustomer({...newCustomer, phone: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={loading ? null : handleAddCustomer}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                    disabled={!newCustomer.customerName || !newCustomer.carType || !newCustomer.carNumber || !newCustomer.phone || loading}
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -400,58 +409,62 @@ const Customers = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editCustomer')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('customerName')}
-                  value={editingCustomer.customerName}
-                  onChange={(e) => setEditingCustomer({...editingCustomer, customerName: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('carType')}
-                  value={editingCustomer.carType}
-                  onChange={(e) => setEditingCustomer({...editingCustomer, carType: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('carNumber')}
-                  value={editingCustomer.carNumber}
-                  onChange={(e) => setEditingCustomer({...editingCustomer, carNumber: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="tel"
-                  placeholder={t('phone')}
-                  value={editingCustomer.phone}
-                  onChange={(e) => setEditingCustomer({...editingCustomer, phone: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleEditCustomer}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                >
-                  {t('save')}
-                </button>
-              </div>
+              <form onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('customerName')}
+                    value={editingCustomer.customerName}
+                    onChange={(e) => setEditingCustomer({...editingCustomer, customerName: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('carType')}
+                    value={editingCustomer.carType}
+                    onChange={(e) => setEditingCustomer({...editingCustomer, carType: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('carNumber')}
+                    value={editingCustomer.carNumber}
+                    onChange={(e) => setEditingCustomer({...editingCustomer, carNumber: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="tel"
+                    placeholder={t('phone')}
+                    value={editingCustomer.phone}
+                    onChange={(e) => setEditingCustomer({...editingCustomer, phone: e.target.value})}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleEditCustomer}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

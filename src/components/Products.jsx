@@ -42,6 +42,31 @@ const Products = () => {
   const { darkMode } = useTheme();
   const { success, error: showError, warning } = useNotifications();
 
+  // Handle form submit
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  // Handle Enter key to move to next input or submit if last field
+  const handleKeyDown = (e, formId) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+      const form = document.getElementById(formId);
+      if (form) {
+        const inputs = Array.from(form.querySelectorAll('input:not([type="submit"]):not([type="button"]), textarea, select'));
+        const currentIndex = inputs.indexOf(e.target);
+        
+        if (currentIndex < inputs.length - 1) {
+          // Move to next input
+          e.preventDefault();
+          inputs[currentIndex + 1].focus();
+        } else {
+          // Last field - allow form submission
+          // Don't prevent default, let form submit naturally
+        }
+      }
+    }
+  };
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -275,10 +300,10 @@ const Products = () => {
 
         {/* Products Table */}
         <div className={`overflow-x-auto rounded-lg shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <table className="w-full">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-              <tr>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
+              <tr className=''>
+                <th className={`px-2 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('name')}>
                   <div className="flex items-center justify-center gap-2">
@@ -288,33 +313,33 @@ const Products = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-4 py-3 text-center text-xs font-medium uppercase tracking-wider w-48 ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider w-48 ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('description')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('category')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('partNumber')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('brandName')}
                 </th>
                
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('storageLocation')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('quantity')}>
                   <div className="flex items-center justify-center gap-2">
@@ -324,12 +349,12 @@ const Products = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('cost')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`} onClick={() => handleSort('price')}>
                   <div className="flex items-center justify-center gap-2">
@@ -339,12 +364,12 @@ const Products = () => {
                     )}
                   </div>
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('available')}
                 </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                <th className={`px-2 py-1 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
                   {t('actions')}
@@ -354,10 +379,10 @@ const Products = () => {
             <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
               {filteredProducts.map((product) => (
                 <tr key={product.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-3 whitespace-nowrap text-center">
                     <div className="text-sm font-medium">{product.name}</div>
                   </td>
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-2 py-1 text-center">
                     <div 
                       className="text-sm w-48 truncate cursor-help" 
                       title={product.description}
@@ -365,35 +390,35 @@ const Products = () => {
                       {product.description}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.category}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.partNumber || '-'}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.brandName || '-'}</div>
                   </td>
                  
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.storageLocation}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.quantity}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.cost ? `${product.cost} JOD` : '-'}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <div className="text-sm">{product.price} JOD</div>
                   </td>
                   
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-center">
                     <span className={`text-sm font-medium ${getAvailabilityColor(product.quantity)}`}>
                       {getAvailabilityStatus(product.quantity)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                  <td className="px-2 py-1 whitespace-nowrap text-sm font-medium text-center">
                     <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => openEditModal(product)}
@@ -428,16 +453,18 @@ const Products = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addProduct')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('productName')}
-                  value={newProduct.name}
-                  onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
+              <form id="addProductForm" onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('productName')}
+                    value={newProduct.name}
+                    onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
                 <textarea
                   placeholder={t('description')}
                   value={newProduct.description}
@@ -447,94 +474,104 @@ const Products = () => {
                   }`}
                   rows="3"
                 />
-                <input
-                  type="text"
-                  placeholder={t('category')}
-                  value={newProduct.category}
-                  onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  list="categories"
-                />
-                <datalist id="categories">
-                  {categories.map((category) => (
-                    <option key={category} value={category} />
-                  ))}
-                </datalist>
-                <input
-                  type="text"
-                  placeholder={t('partNumber')}
-                  value={newProduct.partNumber}
-                  onChange={(e) => setNewProduct({...newProduct, partNumber: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('brandName')}
-                  value={newProduct.brandName}
-                  onChange={(e) => setNewProduct({...newProduct, brandName: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                
-                <input
-                  type="text"
-                  placeholder={t('storageLocation')}
-                  value={newProduct.storageLocation}
-                  onChange={(e) => setNewProduct({...newProduct, storageLocation: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="number"
-                  placeholder={t('quantity')}
-                  value={newProduct.quantity}
-                  onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder={t('cost')}
-                  value={newProduct.cost}
-                  onChange={(e) => setNewProduct({...newProduct, cost: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                 type="number"
-                 step="0.01"
-                 placeholder={t('price')}
-                 value={newProduct.price}
-                 onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                 className={`w-full px-3 py-2 border rounded ${
-                   darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                 }`}
-               />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleAddProduct}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                  disabled={!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price || loading}
-                >
-                  {t('save')}
-                </button>
-              </div>
+                  <input
+                    type="text"
+                    placeholder={t('category')}
+                    value={newProduct.category}
+                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                    list="categories"
+                  />
+                  <datalist id="categories">
+                    {categories.map((category) => (
+                      <option key={category} value={category} />
+                    ))}
+                  </datalist>
+                  <input
+                    type="text"
+                    placeholder={t('partNumber')}
+                    value={newProduct.partNumber}
+                    onChange={(e) => setNewProduct({...newProduct, partNumber: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={t('brandName')}
+                    value={newProduct.brandName}
+                    onChange={(e) => setNewProduct({...newProduct, brandName: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  
+                  <input
+                    type="text"
+                    placeholder={t('storageLocation')}
+                    value={newProduct.storageLocation}
+                    onChange={(e) => setNewProduct({...newProduct, storageLocation: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    placeholder={t('quantity')}
+                    value={newProduct.quantity}
+                    onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder={t('cost')}
+                    value={newProduct.cost}
+                    onChange={(e) => setNewProduct({...newProduct, cost: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
+                  <input
+                   type="number"
+                   step="0.01"
+                   placeholder={t('price')}
+                   value={newProduct.price}
+                   onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                   onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                   className={`w-full px-3 py-2 border rounded ${
+                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                   }`}
+                 />
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleAddProduct}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                    disabled={!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price || loading}
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
@@ -544,16 +581,18 @@ const Products = () => {
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editProduct')}</h2>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder={t('productName')}
-                  value={editingProduct.name}
-                  onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
+              <form id="editProductForm" onSubmit={handleFormSubmit}>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder={t('productName')}
+                    value={editingProduct.name}
+                    onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})}
+                    onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                    className={`w-full px-3 py-2 border rounded ${
+                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                    }`}
+                  />
                 <textarea
                   placeholder={t('description')}
                   value={editingProduct.description}
@@ -568,6 +607,7 @@ const Products = () => {
                   placeholder={t('category')}
                   value={editingProduct.category}
                   onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -583,6 +623,7 @@ const Products = () => {
                   placeholder={t('partNumber')}
                   value={editingProduct.partNumber || ''}
                   onChange={(e) => setEditingProduct({...editingProduct, partNumber: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -592,6 +633,7 @@ const Products = () => {
                   placeholder={t('brandName')}
                   value={editingProduct.brandName || ''}
                   onChange={(e) => setEditingProduct({...editingProduct, brandName: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -602,6 +644,7 @@ const Products = () => {
                   placeholder={t('cost')}
                   value={editingProduct.cost || ''}
                   onChange={(e) => setEditingProduct({...editingProduct, cost: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -611,6 +654,7 @@ const Products = () => {
                   placeholder={t('storageLocation')}
                   value={editingProduct.storageLocation}
                   onChange={(e) => setEditingProduct({...editingProduct, storageLocation: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -620,6 +664,7 @@ const Products = () => {
                   placeholder={t('quantity')}
                   value={editingProduct.quantity}
                   onChange={(e) => setEditingProduct({...editingProduct, quantity: e.target.value})}
+                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                   className={`w-full px-3 py-2 border rounded ${
                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
@@ -630,25 +675,29 @@ const Products = () => {
                  placeholder={t('price')}
                  value={editingProduct.price}
                  onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})}
+                 onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
                  className={`w-full px-3 py-2 border rounded ${
                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                  }`}
                />
-              </div>
-              <div className="flex gap-2 mt-6">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  {t('cancel')}
-                </button>
-                <button
-                  onClick={handleEditProduct}
-                  className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                >
-                  {t('save')}
-                </button>
-              </div>
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                  >
+                    {t('cancel')}
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleEditProduct}
+                    className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                  >
+                    {t('save')}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

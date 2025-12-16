@@ -292,7 +292,12 @@ const resources = {
         errorFetchingData: 'Error fetching data',
         // Additional
         notes: 'Notes',
-        select: 'Select'
+        select: 'Select',
+        // Invoice Display
+        print: 'Print',
+        downloadPDF: 'Download PDF',
+        additionalNotes: 'Additional Notes',
+        storeName: 'Auto Parts Store'
     }
   },
   ar: {
@@ -585,7 +590,12 @@ const resources = {
       errorFetchingData: 'خطأ في جلب البيانات',
       // إضافية
       notes: 'الملاحظات',
-      select: 'اختر'
+      select: 'اختر',
+      // عرض الفاتورة
+      print: 'طباعة',
+      downloadPDF: 'تحميل PDF',
+      additionalNotes: 'ملاحظات إضافية',
+      storeName: 'متجر قطع السيارات'
     }
   }
 };

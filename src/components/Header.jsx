@@ -32,32 +32,29 @@ const Header = () => {
         </h1>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center gap-4">
         <button
           onClick={toggleTheme}
-          className={`p-2 rounded-lg transition-colors ${
-            darkMode ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
+          className={`px-3 py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
           title={darkMode ? t('lightMode') : t('darkMode')}
         >
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
 
-                 <button
-           onClick={toggleLanguage}
-           className={`px-3 py-2 rounded-lg transition-colors ${
-             darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-           }`}
-           title={i18n.language === 'ar' ? 'English' : 'العربية'}
-         >
-           <Globe size={20} />
-         </button>
+        <button
+          onClick={toggleLanguage}
+          className={`px-3 py-2  rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          title={i18n.language === 'ar' ? 'English' : 'العربية'}
+        >
+          <Globe size={20} />
+        </button>
 
         <button
           onClick={handleLogout}
-          className={`px-3 py-2 rounded-lg transition-colors text-red-600 hover:bg-red-50 ${
-            darkMode ? 'bg-gray-700 hover:bg-red-900' : 'bg-gray-200 hover:bg-red-50'
-          }`}
+          className={`px-3 py-2 rounded-lg transition-colors text-red-600 hover:bg-red-50 ${darkMode ? 'bg-gray-700 hover:bg-red-900' : 'bg-gray-200 hover:bg-red-50'
+            }`}
           title={t('logout')}
         >
           <LogOut size={20} />
