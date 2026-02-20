@@ -37,9 +37,14 @@ const ConfirmationModal = ({
 
   if (!isOpen) return null;
 
-  const handleConfirm = () => {
-    onConfirm();
-    onClose();
+  const handleConfirm = async () => {
+    try {
+      await onConfirm();
+      // Don't close automatically - let the handler close it
+    } catch (error) {
+      console.error('Error in confirmation handler:', error);
+      // Don't close on error
+    }
   };
 
   const handleCancel = () => {

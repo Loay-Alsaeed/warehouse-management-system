@@ -22,6 +22,7 @@ import {
   updateDoc, 
   deleteDoc, 
   doc, 
+  getDoc,
   getDocs,
   query,
   orderBy,
@@ -29,10 +30,11 @@ import {
 } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
 import ConfirmationModal from './ConfirmationModal';
-import AddInvoiceModal from './AddInvoiceModal';
 import { InvoiceDisplay } from './InvoiceDisplay';
+import PaymentModal from './PaymentModal';
+import { DollarSign } from 'lucide-react';
 
-const Invoices = () => {
+const Invoices = ({ onAddInvoice }) => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -47,6 +49,8 @@ const Invoices = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [invoiceForPayment, setInvoiceForPayment] = useState(null);
   const { t, i18n } = useTranslation();
   const { darkMode } = useTheme();
   const { success, error: showError } = useNotifications();
@@ -192,15 +196,17 @@ const Invoices = () => {
   const handleDeleteInvoice = async (invoiceId) => {
     if (!invoiceId) {
       showError(t('error'), t('invoiceNotFound'));
+      setShowDeleteModal(false);
       return;
     }
 
     try {
       // Find the invoice to get its products
-      const invoiceToDelete = invoices.find(invoice => invoice.id === invoiceId);
+      const invoiceToDeleteData = invoices.find(invoice => invoice.id === invoiceId);
       
-      if (!invoiceToDelete) {
+      if (!invoiceToDeleteData) {
         showError(t('error'), t('invoiceNotFound'));
+        setShowDeleteModal(false);
         return;
       }
 
@@ -208,8 +214,8 @@ const Invoices = () => {
       const batch = writeBatch(db);
 
       // Return products quantities to inventory
-      if (invoiceToDelete.products && invoiceToDelete.products.length > 0) {
-        for (const invoiceProduct of invoiceToDelete.products) {
+      if (invoiceToDeleteData.products && invoiceToDeleteData.products.length > 0) {
+        for (const invoiceProduct of invoiceToDeleteData.products) {
           if (invoiceProduct.productId) {
             // Find the current product in inventory
             const currentProduct = products.find(p => p.id === invoiceProduct.productId);
@@ -236,14 +242,19 @@ const Invoices = () => {
       // Commit all changes
       await batch.commit();
 
-      // Refresh data
-      fetchInvoices();
-      fetchProducts(); // Refresh products to show updated quantities
+      // Close modal first
       setShowDeleteModal(false);
+      setInvoiceToDelete(null);
+
+      // Refresh data
+      await fetchInvoices();
+      await fetchProducts(); // Refresh products to show updated quantities
+      
       success(t('invoiceDeleted') || 'Success', t('invoiceDeletedMessage') || 'Invoice deleted successfully');
     } catch (error) {
       console.error('Error deleting invoice:', error);
-      showError(t('error'), t('invoiceDeleteError'));
+      setShowDeleteModal(false);
+      showError(t('error'), t('invoiceDeleteError') || 'Failed to delete invoice');
     }
   };
 
@@ -255,6 +266,69 @@ const Invoices = () => {
   const openEditModal = (invoice) => {
     setEditingInvoice(invoice);
     setShowEditModal(true);
+  };
+
+  const openPaymentModal = (invoice) => {
+    if (!invoice || !invoice.id) {
+      showError(t('error'), t('invoiceNotFound') || 'Invoice not found');
+      return;
+    }
+    setInvoiceForPayment(invoice);
+    setShowPaymentModal(true);
+  };
+
+  const handleUpdatePayment = async (paymentData) => {
+    if (!invoiceForPayment || !invoiceForPayment.id) {
+      showError(t('error'), t('invoiceNotFound') || 'Invoice not found');
+      setShowPaymentModal(false);
+      setInvoiceForPayment(null);
+      return;
+    }
+
+    try {
+      const invoiceRef = doc(db, 'invoices', invoiceForPayment.id);
+      
+      // Check if document exists before updating
+      const invoiceDoc = await getDoc(invoiceRef);
+      if (!invoiceDoc.exists()) {
+        showError(t('error'), t('invoiceNotFound') || 'Invoice not found in database');
+        setShowPaymentModal(false);
+        setInvoiceForPayment(null);
+        // Refresh invoices list
+        await fetchInvoices();
+        return;
+      }
+
+      const currentPaymentAmount = parseFloat(invoiceForPayment.paymentAmount) || 0;
+      const newPaymentAmount = parseFloat(paymentData.amount) || 0;
+      const finalAmount = parseFloat(invoiceForPayment.finalAmount) || 0;
+      
+      if (newPaymentAmount < 0 || newPaymentAmount > finalAmount) {
+        showError(t('error'), t('invalidPaymentAmount') || 'Invalid payment amount');
+        return;
+      }
+      
+      const newRemainingAmount = finalAmount - newPaymentAmount;
+      
+      await updateDoc(invoiceRef, {
+        paymentAmount: newPaymentAmount,
+        remainingAmount: newRemainingAmount,
+        paymentMethod: paymentData.paymentMethod,
+        paymentDate: paymentData.paymentDate,
+        status: newPaymentAmount >= finalAmount ? 'paid' : 'partial',
+        updatedAt: new Date()
+      });
+
+      setShowPaymentModal(false);
+      setInvoiceForPayment(null);
+      success(t('success'), t('paymentUpdated') || 'Payment updated successfully');
+      await fetchInvoices();
+    } catch (err) {
+      console.error('Error updating payment:', err);
+      setShowPaymentModal(false);
+      setInvoiceForPayment(null);
+      showError(t('error'), t('paymentUpdateError') || `Failed to update payment: ${err.message}`);
+    }
   };
 
   if (loading) {
@@ -285,7 +359,13 @@ const Invoices = () => {
             </div>
 
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => {
+                if (onAddInvoice) {
+                  onAddInvoice();
+                } else {
+                  setShowAddModal(true);
+                }
+              }}
               className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 flex items-center justify-center gap-2 w-[20%]"
             >
               <Plus size={20} />
@@ -296,7 +376,7 @@ const Invoices = () => {
 
         {/* Invoices Table */}
         <div className={`overflow-x-auto rounded-lg shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <table className="w-full">
+            <table className="w-full">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
                 <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
@@ -351,12 +431,34 @@ const Invoices = () => {
                 <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
-                  {t('paymentMethod')}
+                  <div className="flex items-center justify-center gap-2">
+                    <DollarSign size={16} />
+                    المبلغ المدفوع
+                  </div>
                 </th>
                 <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
                 }`}>
-                  {t('actions')}
+                  <div className="flex items-center justify-center gap-2">
+                    <Calculator size={16} />
+                    المبلغ المتبقي
+                  </div>
+                </th>
+                
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  عرض الفاتورة
+                </th>
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  تعديل الدفع
+                </th>
+                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                  darkMode ? 'text-gray-300' : 'text-gray-500'
+                }`}>
+                  حذف الفاتورة
                 </th>
               </tr>
             </thead>
@@ -379,33 +481,53 @@ const Invoices = () => {
                     <div className="text-sm font-medium">{formatNumber(invoice.finalAmount)} JOD</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <div className="text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        invoice.paymentMethod === 'cash' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {invoice.paymentMethod === 'cash' ? t('cash') : t('visa')}
-                      </span>
+                    <div className="text-sm font-medium text-green-600">
+                      {formatNumber(invoice.paymentAmount || 0)} JOD
                     </div>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    {(() => {
+                      const finalAmount = parseFloat(invoice.finalAmount) || 0;
+                      const paidAmount = parseFloat(invoice.paymentAmount) || 0;
+                      const remainingAmount = invoice.remainingAmount !== undefined 
+                        ? parseFloat(invoice.remainingAmount) 
+                        : (finalAmount - paidAmount);
+                      return (
+                        <div className={`text-sm font-medium ${
+                          remainingAmount > 0 ? 'text-orange-600' : 'text-green-600'
+                        }`}>
+                          {formatNumber(remainingAmount)} JOD
+                        </div>
+                      );
+                    })()}
+                  </td>
+       
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => openEditModal(invoice)}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs"
-                      >
-                        <Edit size={14} className="inline mr-1" />
-                        {t('viewInvoice')}
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(invoice)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
-                      >
-                                                <Trash2 size={14} className="inline mr-1" />
-                        {t('deleteInvoice')}
-                       </button>
-                    </div>
+                    <button
+                      onClick={() => openEditModal(invoice)}
+                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs flex items-center gap-1 mx-auto"
+                    >
+                      <Edit size={14} />
+                      {t('viewInvoice')}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    <button
+                      onClick={() => openPaymentModal(invoice)}
+                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs flex items-center gap-1 mx-auto"
+                    >
+                      <DollarSign size={14} />
+                      تعديل الدفع
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    <button
+                      onClick={() => openDeleteModal(invoice)}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs flex items-center gap-1 mx-auto"
+                    >
+                      <Trash2 size={14} />
+                      {t('deleteInvoice')}
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -419,28 +541,12 @@ const Invoices = () => {
           )}
         </div>
 
-        {/* Add Invoice Modal */}
-        <AddInvoiceModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          customers={customers}
-          products={products}
-          availableServices={availableServices}
-          onInvoiceAdded={handleInvoiceAdded}
-        />
 
         {/* View Invoice Modal */}
         {showEditModal && editingInvoice && (
           <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
             <div className="w-full h-full relative">
-              <div className="absolute top-4 right-4 z-10">
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className={`${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-100 text-gray-900'} px-4 py-2 rounded-lg font-semibold shadow-lg flex items-center gap-2`}
-                >
-                  <span>{t('close')}</span>
-                </button>
-              </div>
+
               <InvoiceDisplay
                 invoice={editingInvoice}
                 onClose={() => setShowEditModal(false)}
@@ -456,17 +562,46 @@ const Invoices = () => {
           </div>
         )}
 
+        {/* Payment Modal */}
+        {showPaymentModal && invoiceForPayment && (
+          <PaymentModal
+            isOpen={showPaymentModal}
+            onClose={() => {
+              setShowPaymentModal(false);
+              setInvoiceForPayment(null);
+            }}
+            invoiceAmount={invoiceForPayment.finalAmount}
+            currentPaymentAmount={invoiceForPayment.paymentAmount || 0}
+            currentPaymentMethod={invoiceForPayment.paymentMethod}
+            currentPaymentDate={invoiceForPayment.paymentDate}
+            onPaymentComplete={handleUpdatePayment}
+          />
+        )}
+
         {/* Delete Confirmation Modal */}
-        <ConfirmationModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={() => handleDeleteInvoice(invoiceToDelete?.id)}
-          title={t('deleteConfirmation')}
-          message={t('confirmDeleteInvoice')}
-          confirmText="delete"
-          cancelText="cancel"
-          type="danger"
-        />
+        {showDeleteModal && invoiceToDelete && (
+          <ConfirmationModal
+            isOpen={showDeleteModal}
+            onClose={() => {
+              setShowDeleteModal(false);
+              setInvoiceToDelete(null);
+            }}
+            onConfirm={async () => {
+              if (invoiceToDelete && invoiceToDelete.id) {
+                await handleDeleteInvoice(invoiceToDelete.id);
+              } else {
+                showError(t('error'), t('invoiceNotFound') || 'Invoice not found');
+                setShowDeleteModal(false);
+                setInvoiceToDelete(null);
+              }
+            }}
+            title={t('deleteConfirmation')}
+            message={t('confirmDeleteInvoice')}
+            confirmText="delete"
+            cancelText="cancel"
+            type="danger"
+          />
+        )}
 
         {/* ProductSelectionModal removed - selection is inline now */}
       </div>

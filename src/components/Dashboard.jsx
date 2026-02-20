@@ -62,7 +62,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className={`p-6 rounded-lg shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border`}>
           <div className="flex items-center space-x-2">
             <div className="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -119,49 +119,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className={`p-6 rounded-lg shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border`}>
-          <div className="flex items-center space-x-2">
-            <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-              <Package size={24} />
-            </div>
-            <div className="ml-4">
-              <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {i18n.language === 'ar' ? 'المجموعات' : 'Categories'}
-              </p>
-              <p className="text-2xl font-bold text-purple-600">{stats.totalCategories}</p>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className={`p-6 rounded-lg shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border`}>
-        <h2 className="text-xl font-semibold mb-4">
-          {i18n.language === 'ar' ? 'ملخص سريع' : 'Quick Summary'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className={`font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              {i18n.language === 'ar' ? 'إحصائيات المنتجات' : 'Product Statistics'}
-            </h3>
-            <ul className={`space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              <li>• {i18n.language === 'ar' ? 'إجمالي المنتجات' : 'Total Products'}: {stats.totalProducts}</li>
-              <li>• {t('available')}: {stats.availableProducts}</li>
-              <li>• {t('unavailable')}: {stats.unavailableProducts}</li>
-              <li>• {i18n.language === 'ar' ? 'عدد المجموعات' : 'Total Categories'}: {stats.totalCategories}</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className={`font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              {i18n.language === 'ar' ? 'معلومات مالية' : 'Financial Information'}
-            </h3>
-            <ul className={`space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              <li>• {i18n.language === 'ar' ? 'القيمة الإجمالية للمخزون' : 'Total Inventory Value'}: {stats.totalValue} JOD</li>
-              <li>• {i18n.language === 'ar' ? 'متوسط قيمة المنتج' : 'Average Product Value'}: {stats.totalProducts > 0 ? (stats.totalValue / stats.totalProducts).toFixed(2) : '0.00'} JOD</li>
-              <li>• {i18n.language === 'ar' ? 'متوسط الكمية لكل منتج' : 'Average Quantity per Product'}: {stats.totalProducts > 0 ? Math.round(stats.availableProducts / stats.totalProducts * 100) : 0}%</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import { Package, Home, Building2, User, FileText, Truck, Wrench, TrendingUp } from 'lucide-react';
+import { Package, Home, Building2, User, FileText, Truck, Wrench, TrendingUp, FileCheck } from 'lucide-react';
 
 const Sidebar = ({ activePage, onPageChange }) => {
   const { t, i18n } = useTranslation();
@@ -14,6 +14,7 @@ const Sidebar = ({ activePage, onPageChange }) => {
     { id: 'suppliers', label: t('suppliers'), icon: Building2 },
     { id: 'customers', label: t('customers'), icon: User },
     { id: 'invoices', label: t('invoices'), icon: FileText },
+    { id: 'openInvoices', label: 'الفواتير المفتوحة', icon: FileCheck },
     { id: 'dailyInventory', label: t('dailyInventory'), icon: TrendingUp },
     { id: 'shipments', label: t('shipments'), icon: Truck }
   ];
@@ -28,10 +29,10 @@ const Sidebar = ({ activePage, onPageChange }) => {
               <li key={item.id}>
                 <button
                   onClick={() => onPageChange(item.id)}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors bg-transparent ${
+                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
                     activePage === item.id
-                      ? `${darkMode ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700'}`
-                      : `${darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`
+                      ? `${darkMode ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white'}`
+                      : `${darkMode ? 'text-gray-300 hover:bg-gray-700 bg-transparent' : 'text-gray-700 hover:bg-gray-100 bg-transparent'}`
                   }`}
                 >
                   <Icon className="w-5 h-5 mr-3 m-2" />

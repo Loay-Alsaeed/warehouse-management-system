@@ -311,11 +311,12 @@ const Services = () => {
 
         {/* Add Service Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addService')}</h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
+                  <label htmlFor="serviceName">{t('serviceName')}</label>
                   <input
                     type="text"
                     placeholder={t('serviceName')}
@@ -325,6 +326,7 @@ const Services = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="notes">{t('notes')}</label>
                   <textarea
                     placeholder={t('notes')}
                     value={newService.notes}
@@ -334,6 +336,7 @@ const Services = () => {
                     }`}
                     rows="3"
                   />
+                  <label htmlFor="price">{t('price')}</label>
                   <input
                     type="number"
                     step="0.01"
@@ -369,11 +372,12 @@ const Services = () => {
 
         {/* Edit Service Modal */}
         {showEditModal && editingService && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editService')}</h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
+                  <label htmlFor="serviceName">{t('serviceName')}</label>
                   <input
                     type="text"
                     placeholder={t('serviceName')}
@@ -383,6 +387,7 @@ const Services = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="notes">{t('notes')}</label>
                   <textarea
                     placeholder={t('notes')}
                     value={editingService.notes || ''}
@@ -392,6 +397,7 @@ const Services = () => {
                     }`}
                     rows="3"
                   />
+                  <label htmlFor="price">{t('price')}</label>
                   <input
                     type="number"
                     step="0.01"

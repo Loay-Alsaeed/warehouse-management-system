@@ -341,11 +341,12 @@ const Suppliers = () => {
 
         {/* Add Supplier Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addSupplier')}</h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
+                  <label htmlFor="companyName">{t('companyName')}</label>
                   <input
                     type="text"
                     placeholder={t('companyName')}
@@ -355,6 +356,7 @@ const Suppliers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="contactPerson">{t('contactPerson')}</label>
                   <input
                     type="text"
                     placeholder={t('contactPerson')}
@@ -364,15 +366,17 @@ const Suppliers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="phone">{t('phone')}</label>
                   <input
                     type="tel"
                     placeholder={t('phone')}
                     value={newSupplier.phone}
                     onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})}
-                    className={`w-full px-3 py-2 border rounded ${
+                    className={`w-full px-3 py-2 border rounded text-right ${
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="email">{t('email')}</label>
                   <input
                     type="email"
                     placeholder={t('email')}
@@ -407,11 +411,12 @@ const Suppliers = () => {
 
         {/* Edit Supplier Modal */}
         {showEditModal && editingSupplier && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editSupplier')}</h2>
               <form onSubmit={handleFormSubmit}>
-                <div className="space-y-4">
+                <div className="space-y-4 text-right">
+                  <label htmlFor="companyName">{t('companyName')}</label>
                   <input
                     type="text"
                     placeholder={t('companyName')}
@@ -421,6 +426,7 @@ const Suppliers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="contactPerson">{t('contactPerson')}</label>
                   <input
                     type="text"
                     placeholder={t('contactPerson')}
@@ -430,15 +436,17 @@ const Suppliers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="phone">{t('phone')}</label>
                   <input
                     type="tel"
                     placeholder={t('phone')}
                     value={editingSupplier.phone}
                     onChange={(e) => setEditingSupplier({...editingSupplier, phone: e.target.value})}
-                    className={`w-full px-3 py-2 border rounded ${
+                    className={`w-full px-3 py-2 border rounded text-right ${
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="email">{t('email')}</label>
                   <input
                     type="email"
                     placeholder={t('email')}

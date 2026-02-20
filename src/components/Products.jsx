@@ -450,109 +450,149 @@ const Products = () => {
 
         {/* Add Product Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-10 flex items-center justify-center z-50 overflow-y-auto">
+            <div className={`p-6 rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addProduct')}</h2>
               <form id="addProductForm" onSubmit={handleFormSubmit}>
+                {/* كل صف فيه حقلين أو ثلاث حقول جنب بعض */}
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder={t('productName')}
-                    value={newProduct.name}
-                    onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                <textarea
-                  placeholder={t('description')}
-                  value={newProduct.description}
-                  onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  rows="3"
-                />
-                  <input
-                    type="text"
-                    placeholder={t('category')}
-                    value={newProduct.category}
-                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                    list="categories"
-                  />
-                  <datalist id="categories">
-                    {categories.map((category) => (
-                      <option key={category} value={category} />
-                    ))}
-                  </datalist>
-                  <input
-                    type="text"
-                    placeholder={t('partNumber')}
-                    value={newProduct.partNumber}
-                    onChange={(e) => setNewProduct({...newProduct, partNumber: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    placeholder={t('brandName')}
-                    value={newProduct.brandName}
-                    onChange={(e) => setNewProduct({...newProduct, brandName: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                  
-                  <input
-                    type="text"
-                    placeholder={t('storageLocation')}
-                    value={newProduct.storageLocation}
-                    onChange={(e) => setNewProduct({...newProduct, storageLocation: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                  <input
-                    type="number"
-                    placeholder={t('quantity')}
-                    value={newProduct.quantity}
-                    onChange={(e) => setNewProduct({...newProduct, quantity: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder={t('cost')}
-                    value={newProduct.cost}
-                    onChange={(e) => setNewProduct({...newProduct, cost: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                  <input
-                   type="number"
-                   step="0.01"
-                   placeholder={t('price')}
-                   value={newProduct.price}
-                   onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                   onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
-                   className={`w-full px-3 py-2 border rounded ${
-                     darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                   }`}
-                 />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="productName">{t('productName')}</label>
+                      <input
+                        type="text"
+                        placeholder={t('productName')}
+                        value={newProduct.name}
+                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="partNumber">{t('partNumber')}</label>
+                      <input
+                        type="text"
+                        placeholder={t('partNumber')}
+                        value={newProduct.partNumber}
+                        onChange={(e) => setNewProduct({ ...newProduct, partNumber: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="category">{t('category')}</label>
+                      <input
+                        type="text"
+                        placeholder={t('category')}
+                        value={newProduct.category}
+                        onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                        list="categories"
+                      />
+                      <datalist id="categories">
+                        {categories.map((category) => (
+                          <option key={category} value={category} />
+                        ))}
+                      </datalist>
+                    </div>
+                    <div>
+                      <label htmlFor="brandName">{t('brandName')}</label>
+                      <input
+                        type="text"
+                        placeholder={t('brandName')}
+                        value={newProduct.brandName}
+                        onChange={(e) => setNewProduct({ ...newProduct, brandName: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="storageLocation">{t('storageLocation')}</label>
+                      <input
+                        type="text"
+                        placeholder={t('storageLocation')}
+                        value={newProduct.storageLocation}
+                        onChange={(e) => setNewProduct({ ...newProduct, storageLocation: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="quantity">{t('quantity')}</label>
+                      <input
+                        type="number"
+                        placeholder={t('quantity')}
+                        value={newProduct.quantity}
+                        onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="cost">{t('cost')}</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder={t('cost')}
+                        value={newProduct.cost}
+                        onChange={(e) => setNewProduct({ ...newProduct, cost: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="price">{t('price')}</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder={t('price')}
+                        value={newProduct.price}
+                        onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* حقل الوصف يكون في صف لوحده بكامل العرض */}
+                  <div>
+                    <label htmlFor="description">{t('description')}</label>
+                    <textarea
+                      placeholder={t('description')}
+                      value={newProduct.description}
+                      onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                      }`}
+                      rows="3"
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-2 mt-6">
                   <button
@@ -566,7 +606,15 @@ const Products = () => {
                     type="submit"
                     onClick={handleAddProduct}
                     className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                    disabled={!newProduct.name || !newProduct.description || !newProduct.category || !newProduct.storageLocation || !newProduct.quantity || !newProduct.price || loading}
+                    disabled={
+                      !newProduct.name ||
+                      !newProduct.description ||
+                      !newProduct.category ||
+                      !newProduct.storageLocation ||
+                      !newProduct.quantity ||
+                      !newProduct.price ||
+                      loading
+                    }
                   >
                     {t('save')}
                   </button>
@@ -578,108 +626,157 @@ const Products = () => {
 
         {/* Edit Product Modal */}
         {showEditModal && editingProduct && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
+            <div className={`p-6 rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editProduct')}</h2>
               <form id="editProductForm" onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder={t('productName')}
-                    value={editingProduct.name}
-                    onChange={(e) => setEditingProduct({...editingProduct, name: e.target.value})}
-                    onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                    className={`w-full px-3 py-2 border rounded ${
-                      darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                <textarea
-                  placeholder={t('description')}
-                  value={editingProduct.description}
-                  onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  rows="3"
-                />
-                <input
-                  type="text"
-                  placeholder={t('category')}
-                  value={editingProduct.category}
-                  onChange={(e) => setEditingProduct({...editingProduct, category: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                  list="editCategories"
-                />
-                <datalist id="editCategories">
-                  {categories.map((category) => (
-                    <option key={category} value={category} />
-                  ))}
-                </datalist>
-                <input
-                  type="text"
-                  placeholder={t('partNumber')}
-                  value={editingProduct.partNumber || ''}
-                  onChange={(e) => setEditingProduct({...editingProduct, partNumber: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('brandName')}
-                  value={editingProduct.brandName || ''}
-                  onChange={(e) => setEditingProduct({...editingProduct, brandName: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder={t('cost')}
-                  value={editingProduct.cost || ''}
-                  onChange={(e) => setEditingProduct({...editingProduct, cost: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder={t('storageLocation')}
-                  value={editingProduct.storageLocation}
-                  onChange={(e) => setEditingProduct({...editingProduct, storageLocation: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                  type="number"
-                  placeholder={t('quantity')}
-                  value={editingProduct.quantity}
-                  onChange={(e) => setEditingProduct({...editingProduct, quantity: e.target.value})}
-                  onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                  className={`w-full px-3 py-2 border rounded ${
-                    darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                  }`}
-                />
-                <input
-                 type="number"
-                 step="0.01"
-                 placeholder={t('price')}
-                 value={editingProduct.price}
-                 onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})}
-                 onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
-                 className={`w-full px-3 py-2 border rounded ${
-                   darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
-                 }`}
-               />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="editName">{t('productName')}</label>
+                      <input
+                        id="editName"
+                        type="text"
+                        placeholder={t('productName')}
+                        value={editingProduct.name}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="editPartNumber">{t('partNumber')}</label>
+                      <input
+                        id="editPartNumber"
+                        type="text"
+                        placeholder={t('partNumber')}
+                        value={editingProduct.partNumber || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, partNumber: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="editCategory">{t('category')}</label>
+                      <input
+                        id="editCategory"
+                        type="text"
+                        placeholder={t('category')}
+                        value={editingProduct.category}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                        list="editCategories"
+                      />
+                      <datalist id="editCategories">
+                        {categories.map((category) => (
+                          <option key={category} value={category} />
+                        ))}
+                      </datalist>
+                    </div>
+                    <div>
+                      <label htmlFor="editBrandName">{t('brandName')}</label>
+                      <input
+                        id="editBrandName"
+                        type="text"
+                        placeholder={t('brandName')}
+                        value={editingProduct.brandName || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, brandName: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="editCost">{t('cost')}</label>
+                      <input
+                        id="editCost"
+                        type="number"
+                        step="0.01"
+                        placeholder={t('cost')}
+                        value={editingProduct.cost || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, cost: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="editStorageLocation">{t('storageLocation')}</label>
+                      <input
+                        id="editStorageLocation"
+                        type="text"
+                        placeholder={t('storageLocation')}
+                        value={editingProduct.storageLocation}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, storageLocation: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="editQuantity">{t('quantity')}</label>
+                      <input
+                        id="editQuantity"
+                        type="number"
+                        placeholder={t('quantity')}
+                        value={editingProduct.quantity}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, quantity: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="editPrice">{t('price')}</label>
+                      <input
+                        id="editPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder={t('price')}
+                        value={editingProduct.price}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* حقل الوصف يكون في صف لوحده بكامل العرض */}
+                  <div>
+                    <label htmlFor="editDescription">{t('description')}</label>
+                    <textarea
+                      id="editDescription"
+                      placeholder={t('description')}
+                      value={editingProduct.description}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded ${
+                        darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                      }`}
+                      rows="3"
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-2 mt-6">
                   <button

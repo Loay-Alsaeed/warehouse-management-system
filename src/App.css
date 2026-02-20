@@ -91,3 +91,27 @@
     --radius: 0.5rem;
   }
   
+  @media print {
+    body {
+      background: white !important;
+    }
+  
+    .print\\:hidden {
+      display: none !important;
+    }
+  
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+  }
+
+  .invoice-pdf {
+    background: white !important;
+    color: #000 !important;
+  }
+  
+  .invoice-pdf * {
+    color: #000 !important;
+    background-color: transparent !important;
+  }

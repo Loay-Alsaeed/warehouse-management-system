@@ -340,11 +340,12 @@ const Customers = () => {
 
         {/* Add Customer Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('addCustomer')}</h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
+                  <label htmlFor="customerName">{t('customerName')}</label>
                   <input
                     type="text"
                     placeholder={t('customerName')}
@@ -354,6 +355,7 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="carType">{t('carType')}</label>
                   <input
                     type="text"
                     placeholder={t('carType')}
@@ -363,6 +365,7 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="carNumber">{t('carNumber')}</label>
                   <input
                     type="text"
                     placeholder={t('carNumber')}
@@ -372,12 +375,13 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="phone">{t('phone')}</label>
                   <input
                     type="tel"
                     placeholder={t('phone')}
                     value={newCustomer.phone}
                     onChange={(e) => setNewCustomer({...newCustomer, phone: e.target.value})}
-                    className={`w-full px-3 py-2 border rounded ${
+                    className={`w-full px-3 py-2 border rounded text-right ${
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
@@ -406,11 +410,12 @@ const Customers = () => {
 
         {/* Edit Customer Modal */}
         {showEditModal && editingCustomer && (
-          <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
             <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <h2 className="text-xl font-bold mb-4">{t('editCustomer')}</h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
+                  <label htmlFor="customerName">{t('customerName')}</label>
                   <input
                     type="text"
                     placeholder={t('customerName')}
@@ -420,6 +425,7 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="carType">{t('carType')}</label>
                   <input
                     type="text"
                     placeholder={t('carType')}
@@ -429,6 +435,7 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="carNumber">{t('carNumber')}</label>
                   <input
                     type="text"
                     placeholder={t('carNumber')}
@@ -438,12 +445,13 @@ const Customers = () => {
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />
+                  <label htmlFor="phone">{t('phone')}</label>
                   <input
                     type="tel"
                     placeholder={t('phone')}
                     value={editingCustomer.phone}
                     onChange={(e) => setEditingCustomer({...editingCustomer, phone: e.target.value})}
-                    className={`w-full px-3 py-2 border rounded ${
+                    className={`w-full px-3 py-2 border rounded text-right ${
                       darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                     }`}
                   />

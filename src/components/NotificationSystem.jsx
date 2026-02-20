@@ -162,7 +162,7 @@ const NotificationContainer = () => {
   };
 
   return (
-    <div className="fixedNotification z-50 space-y-2">
+    <div className="fixed top-4 left-4 z-50 space-y-2 max-w-sm">
       {notifications.length > 1 && (
         <div className="flex justify-between items-center mb-2">
           <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -178,10 +178,10 @@ const NotificationContainer = () => {
       )}
       
       {notifications.map((notification) => (
-                 <div
-           key={notification.id}
-           className={`${getNotificationStyles(notification.type)} transform transition-all duration-300 ease-in-out animate-slide-in-bottom`}
-         >
+        <div
+          key={notification.id}
+          className={`${getNotificationStyles(notification.type)} transform transition-all duration-300 ease-in-out`}
+        >
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               {getNotificationIcon(notification.type)}

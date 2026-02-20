@@ -93,4 +93,12 @@
   
     --radius: 0.5rem;
   }
+  .invoice-pdf {
+    background: white !important;
+    color: #000 !important;
+  }
   
+  .invoice-pdf * {
+    color: #000 !important;
+    background-color: transparent !important;
+  }
