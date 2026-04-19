@@ -1,0 +1,990 @@
+
+
+
+
+
+/* =======================
+   الحاوية الرئيسية
+======================= */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f3f4f6; /* مثل bg-gray-100 */
+  position: relative;
+  margin: auto;
+}
+
+
+html.dark {
+  background-color: #598de1;
+}
+
+div div.flex.min-h-screen {
+  min-height: 100vh;
+}
+
+/* الوضع الداكن */
+.app-container.dark {
+  background-color: #111827; /* bg-gray-900 */
+  color: #e5e7eb;
+}
+
+/* =======================
+   الشريط العلوي (أزرار اللغة والثيم)
+======================= */
+.top-bar {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.theme-toggle-btn,
+.lang-btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: background-color 0.2s ease;
+}
+
+.theme-toggle-btn:hover,
+.lang-btn:hover {
+  background-color: #f3f4f6; /* hover:bg-gray-100 */
+}
+
+.app-container.dark .theme-toggle-btn,
+.app-container.dark .lang-btn {
+  background-color: #374151; /* bg-gray-700 */
+  color: #fff;
+  border-color: #4b5563;
+}
+
+.app-container.dark .theme-toggle-btn:hover,
+.app-container.dark .lang-btn:hover {
+  background-color: #4b5563; /* hover:bg-gray-600 */
+}
+
+/* =======================
+   صندوق تسجيل الدخول
+======================= */
+.login-box {
+  max-width: 28rem; /* مثل max-w-md */
+  width: 100%;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.app-container.dark .login-box {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #f9fafb;
+}
+
+/* =======================
+   العنوان
+======================= */
+.login-title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.app-container.dark .login-title {
+  color: #fff;
+}
+
+.login-title.light {
+  color: #111827; /* gray-900 */
+}
+
+/* =======================
+   صندوق الخطأ
+======================= */
+.error-box {
+  background-color: #fee2e2; /* red-100 */
+  border: 1px solid #f87171; /* red-400 */
+  color: #b91c1c; /* red-700 */
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+/* =======================
+   الحقول (إيميل - باسورد)
+======================= */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.app-container.dark .form-group label {
+  color: #d1d5db; /* gray-300 */
+}
+
+.form-group label.light {
+  color: #374151; /* gray-700 */
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #6366f1; /* indigo-500 */
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.4);
+}
+
+.app-container.dark .input-field {
+  background-color: #374151; /* gray-700 */
+  color: #fff;
+  border-color: #4b5563;
+}
+
+/* زر إظهار/إخفاء كلمة المرور */
+.password-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* =======================
+   Checkbox "تذكرني"
+======================= */
+.checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.checkbox:checked {
+  background-color: #4f46e5; /* indigo-600 */
+  border-color: #4f46e5;
+}
+
+/* =======================
+   زر تسجيل الدخول
+======================= */
+.submit-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5; /* indigo-600 */
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #4338ca; /* indigo-700 */
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+/* =======================
+   AddInvoiceModal Styles
+======================= */
+
+/* Layout & Container */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.max-w-7xl {
+  max-width: 80rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Spacing */
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.p-5 {
+  padding: 1.25rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+
+.py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-1\.5 {
+  margin-bottom: 0.375rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Flexbox */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-12 {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.col-span-4 {
+  grid-column: span 4 / span 4;
+}
+
+.col-span-8 {
+  grid-column: span 8 / span 8;
+}
+
+/* Spacing Utilities */
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-5 > * + * {
+  margin-top: 1.25rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Typography */
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-heading {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* Colors & Backgrounds */
+.bg-background {
+  background-color: var(--background);
+}
+
+.bg-background\/95 {
+  background-color: var(--background);
+  opacity: 0.95;
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.bg-input {
+  background-color: var(--input);
+}
+
+.bg-input\/50 {
+  background-color: var(--input);
+  opacity: 0.5;
+}
+
+.bg-muted {
+  background-color: var(--muted);
+}
+
+.bg-muted\/20 {
+  background-color: var(--muted);
+  opacity: 0.2;
+}
+
+.bg-muted\/30 {
+  background-color: var(--muted);
+  opacity: 0.3;
+}
+
+.bg-muted\/50 {
+  background-color: var(--muted);
+  opacity: 0.5;
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.bg-primary\/10 {
+  background-color: var(--primary);
+  opacity: 0.1;
+}
+
+.bg-primary\/20 {
+  background-color: var(--primary);
+  opacity: 0.2;
+}
+
+.bg-primary\/30 {
+  background-color: var(--primary);
+  opacity: 0.3;
+}
+
+.bg-primary\/50 {
+  background-color: var(--primary);
+  opacity: 0.5;
+}
+
+.bg-primary\/90 {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
+.bg-black {
+  background-color: rgb(0, 0, 0);
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-white {
+  background-color: rgb(255, 255, 255);
+}
+
+.bg-gray-700 {
+  background-color: rgb(55, 65, 81);
+}
+
+.bg-gray-800 {
+  background-color: rgb(31, 41, 55);
+}
+
+.bg-\[\#10b981\] {
+  background-color: #10b981;
+}
+
+.bg-\[\#10b981\]\/10 {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.bg-\[\#10b981\]\/20 {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+.bg-green-600 {
+  background-color: rgb(22, 163, 74);
+}
+
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-primary\/10 {
+  --tw-gradient-from: var(--primary);
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  opacity: 0.1;
+}
+
+.to-primary\/5 {
+  --tw-gradient-to: var(--primary);
+  opacity: 0.05;
+}
+
+/* Text Colors */
+.text-foreground {
+  color: var(--foreground);
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+.text-destructive {
+  color: var(--destructive);
+}
+
+.text-white {
+  color: rgb(255, 255, 255);
+}
+
+/* Borders */
+.border {
+  border-width: 1px;
+  border-color: var(--border);
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-l-2 {
+  border-left-width: 2px;
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+
+.border-dashed {
+  border-style: dashed;
+}
+
+.border-gray-300 {
+  border-color: rgb(209, 213, 219);
+}
+
+.border-gray-600 {
+  border-color: rgb(75, 85, 99);
+}
+
+.border-\[\#10b981\]\/20 {
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.border-primary\/30 {
+  border-color: var(--primary);
+  opacity: 0.3;
+}
+
+/* Border Radius */
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Positioning */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.sticky {
+  position: sticky;
+}
+
+.top-24 {
+  top: 6rem;
+}
+
+.top-1\/2 {
+  top: 50%;
+}
+
+.right-3 {
+  right: 0.75rem;
+}
+
+.left-0 {
+  left: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+/* Transform */
+.-translate-y-1\/2 {
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+/* Sizing */
+.size-4 {
+  width: 1rem;
+  height: 1rem;
+}
+
+.size-5 {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.w-20 {
+  width: 5rem;
+}
+
+.w-24 {
+  width: 6rem;
+}
+
+.w-28 {
+  width: 7rem;
+}
+
+.min-h-30 {
+  min-height: 7.5rem;
+}
+
+.h-px {
+  height: 1px;
+}
+
+.max-h-52 {
+  max-height: 13rem;
+}
+
+/* Display */
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+/* Overflow */
+.overflow-scroll {
+  overflow: scroll;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+/* Text Alignment */
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Text Utilities */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Appearance */
+.appearance-none {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Cursor */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* Pointer Events */
+.pointer-events-none {
+  pointer-events: none;
+}
+
+/* Outline */
+.outline-none {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Focus States */
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus\:ring-ring:focus {
+  --tw-ring-color: var(--ring);
+}
+
+.focus\:border-ring:focus {
+  border-color: var(--ring);
+}
+
+/* Hover States */
+.hover\:bg-muted:hover {
+  background-color: var(--muted);
+}
+
+.hover\:bg-muted\/50:hover {
+  background-color: var(--muted);
+  opacity: 0.5;
+}
+
+.hover\:bg-\[\#10b981\]\/20:hover {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+.hover\:bg-\[\#059669\]:hover {
+  background-color: #059669;
+}
+
+.hover\:bg-primary\/80:hover {
+  background-color: var(--primary);
+  opacity: 0.8;
+}
+
+.hover\:bg-primary\/90:hover {
+  background-color: var(--primary);
+  opacity: 0.9;
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: rgb(243, 244, 246);
+}
+
+.hover\:bg-green-700:hover {
+  background-color: rgb(21, 128, 61);
+}
+
+/* Disabled States */
+.disabled\:bg-\[\#10b981\]\/50:disabled {
+  background-color: rgba(16, 185, 129, 0.5);
+}
+
+.disabled\:bg-primary\/50:disabled {
+  background-color: var(--primary);
+  opacity: 0.5;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
+}
+
+/* Transitions */
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Animations */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Effects */
+.backdrop-blur-sm {
+  --tw-backdrop-blur: blur(4px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-saturate) var(--tw-backdrop-contrast) var(--tw-backdrop-brightness);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-saturate) var(--tw-backdrop-contrast) var(--tw-backdrop-brightness);
+}
+
+.shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-primary\/25 {
+  --tw-shadow-color: var(--primary);
+  --tw-shadow: var(--tw-shadow-colored);
+  opacity: 0.25;
+}
+
+/* Checked States */
+.checked\:border-primary:checked {
+  border-color: var(--primary);
+}
+
+.checked\:border-\[6px\]:checked {
+  border-width: 6px;
+}

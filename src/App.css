@@ -1,0 +1,146 @@
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+  
+    --font-font-sans: var(--font-sans);
+    --font-font-heading: var(--font-heading);
+    --font-font-serif: var(--font-serif);
+    --font-font-mono: var(--font-mono);
+  
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+  
+    --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+    --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+    --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+    --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+    --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+    --tracking-normal: var(--tracking-normal);
+  }
+    
+  :root {
+      --background: #0f172a;
+    --foreground: #f8fafc;
+    --primary: #6366f1;
+    --primary-foreground: #ffffff;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #334155;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+    --popover: #0f172a;
+    --popover-foreground: #f8fafc;
+    --border: #334155;
+    --input: #1e293b;
+    --ring: #6366f1;
+    --sidebar: #020617;
+    --sidebar-foreground: #f8fafc;
+    --sidebar-primary: #6366f1;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1e293b;
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: #1e293b;
+    --sidebar-ring: #6366f1;
+    --chart-1: #6366f1;
+    --chart-2: #3b82f6;
+    --chart-3: #10b981;
+    --chart-4: #f59e0b;
+    --chart-5: #ef4444;
+  
+    --font-sans: "Geist";
+    --font-heading: "Geist";
+    --font-serif: "Playfair Display";
+    --font-mono: "JetBrains Mono";
+  
+    --radius: 0.5rem;
+  }
+  
+  @media print {
+    body {
+      background: white !important;
+    }
+  
+    .print\\:hidden {
+      display: none !important;
+    }
+  
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+  }
+
+  .invoice-pdf {
+    background: white !important;
+    color: #000 !important;
+  }
+  
+  .invoice-pdf * {
+    color: #000 !important;
+    background-color: transparent !important;
+  }
+
+  .invoice-wrapper {
+    width: 210mm;
+    background: white;
+  }
+  
+  .invoice-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: white;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .invoice-body {
+    margin-top: 140px;
+  }
+  
+  table {
+    page-break-inside: auto;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
