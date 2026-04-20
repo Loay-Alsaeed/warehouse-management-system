@@ -1,66 +1,48 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, resolve } from "path";
-import express from "express";
 import axios from "axios";
-import clipboard from "clipboardy";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: resolve(__dirname, "../../.env") });
 import { create } from "xmlbuilder2";
-import { randomUUID } from "crypto";
 import crypto from "crypto";
 
-const app = express();
-app.use(express.json());
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-app.post("/api/invoice", async (req, res) => {
   try {
     const invoice = req.body;
 
     const { xml } = generateUBL(invoice);
 
-    // ✅ تنظيف XML
     const xmlClean = xml
       .replace(/\uFEFF/g, "")
       .replace(/\r?\n|\r/g, "")
       .trim();
 
-    // ✅ Base64
     let encoded = Buffer.from(xmlClean, "utf-8").toString("base64");
 
-    // console.log("📦 BASE64:");
-    // console.log(encoded);
-
-    await clipboard.write(encoded);
-    // console.log("📋 Copied to clipboard");
-
-    const response = await axios.post("https://backend.jofotara.gov.jo/core/invoices/", { invoice: encoded },
+    const response = await axios.post(
+      "https://backend.jofotara.gov.jo/core/invoices/",
+      { invoice: encoded },
       {
         headers: {
           "Content-Type": "application/json",
-          "Client-Id": "64dc9a0b-f054-4ac6-817c-aaefbeab2805",
-          "Secret-Key": "Gj5nS9wyYHRadaVffz5VKB4v4wlVWyPhcJvrTD4NHtOofe6pMmpJEX2r7MyE2n+qypopX17fPapDNSn3lb6JkIJNbxPtLSBosC8NBFeNPL4I2ufAYTi7S9chF7yszBD2sLsFF0vRxM3uHHuAVlyMncehMbTyb0MKDOSmmTL9d2cHDux3+OQML1is59Fz7HVIC51A6unWgA2NVXwjmbb6xdePLt3qsxQEt/O0tjNxQlAqJ74Xle4bn0/md5AAMK8rC1wMB4gpA8Qag78+e+s1lw=="
+          "Client-Id": process.env.CLIENT_ID,
+          "Secret-Key": process.env.SECRET_KEY
         }
       }
     );
 
-    // console.log("🟢 RESPONSE:", response.data);
-
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: response.data
     });
 
   } catch (err) {
-    // console.error("🔥 ERROR:", err.response?.data || err.message);
-
     return res.status(500).json({
       success: false,
       error: err.response?.data || err.message
     });
   }
-});
+}
 
 // 🧩 تحويل JSON → UBL XML
 
@@ -305,4 +287,3 @@ return { xml, uuid }
 
 }
 
-export default app;
