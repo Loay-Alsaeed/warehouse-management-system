@@ -25,8 +25,8 @@ export default async function handler(req, res) {
       {
         headers: {
           "Content-Type": "application/json",
-          "Client-Id": process.env.CLIENT_ID,
-          "Secret-Key": process.env.SECRET_KEY
+          "Client-Id": "64dc9a0b-f054-4ac6-817c-aaefbeab2805",
+          "Secret-Key": "Gj5nS9wyYHRadaVffz5VKB4v4wlVWyPhcJvrTD4NHtOofe6pMmpJEX2r7MyE2n+qypopX17fPapDNSn3lb6JkIJNbxPtLSBosC8NBFeNPL4I2ufAYTi7S9chF7yszBD2sLsFF0vRxM3uHHuAVlyMncehMbTyb0MKDOSmmTL9d2cHDux3+OQML1is59Fz7HVIC51A6unWgA2NVXwjmbb6xdePLt3qsxQEt/O0tjNxQlAqJ74Xle4bn0/md5AAMK8rC1wMB4gpA8Qag78+e+s1lw=="
         }
       }
     );
