@@ -130,7 +130,7 @@ doc.ele("cac:AccountingSupplierParty")
 
     .ele("cac:PartyTaxScheme")
       .ele("cbc:CompanyID")
-      .txt(invoice.companyId ?? "")
+      .txt(invoice.companyId ?? "9170227")
       .up()
 
       .ele("cac:TaxScheme")
@@ -140,7 +140,7 @@ doc.ele("cac:AccountingSupplierParty")
 
     .ele("cac:PartyLegalEntity")
       .ele("cbc:RegistrationName")
-      .txt(invoice.registrationName ?? "")
+      .txt(invoice.registrationName ?? "مؤسسة رامي السعيد لقطع السيارات")
       .up()
     .up()
 

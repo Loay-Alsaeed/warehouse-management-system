@@ -36,6 +36,8 @@ import { InvoiceDisplay } from './InvoiceDisplay';
 import PaymentModal from './PaymentModal';
 import { DollarSign } from 'lucide-react';
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
 const Invoices = ({ onAddInvoice }) => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
@@ -440,6 +442,13 @@ const Invoices = ({ onAddInvoice }) => {
           );
         }
       } else {
+        if (res.status === 404) {
+          showError(
+            t('error'),
+            'مسار API غير متاح. إذا كنت تعمل محلياً ضع VITE_API_BASE_URL أو شغّل المشروع عبر vercel dev.'
+          );
+          return;
+        }
         showError(t('error'), extractEinvoiceErrorMessage(data.error));
       }
     } catch (err) {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { auth } from '../firebase';
+import AppBootLoader from '../components/AppBootLoader';
 import { 
   signInWithEmailAndPassword, 
   signOut, 
@@ -59,6 +60,12 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      window.dispatchEvent(new Event('app-ready'));
+    }
+  }, [loading]);
+
   // Check session persistence on page load
   useEffect(() => {
     if (!loading && currentUser) {
@@ -85,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <AppBootLoader /> : children}
     </AuthContext.Provider>
   );
 };
