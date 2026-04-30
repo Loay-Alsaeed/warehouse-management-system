@@ -8,20 +8,17 @@ import {
     Image,
     Font
   } from "@react-pdf/renderer";
-  
+
   import CairoFont from "../assets/Cairo-Regular.ttf";  
-  
+  import QRCode from "qrcode";
+  import { useEffect, useState } from "react";
+
+
   Font.register({
     family: "Cairo",
     src: CairoFont
   });
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     window.print();
-  //   }, 500);
-  // }, []);
-  
   const styles = StyleSheet.create({
     page: {
       paddingTop: 110,
@@ -109,8 +106,10 @@ import {
   });
   
   
-  const InvoiceDocument = ({ invoice }) => {
-  
+  const InvoiceDocument = ({ invoice, qrImage }) => {
+
+
+
     const allItems = [
       ...(invoice?.products || []),
       ...(invoice?.services || [])
@@ -140,11 +139,8 @@ import {
                 <Text>التاريخ: {invoice?.invoiceDate}</Text>
               </View>
 
-                {invoice?.eInvoiceQr && (
-                <Image
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${invoice.eInvoiceQr}`}
-                  style={{ width: 60, height: 60 }}
-                />
+              {qrImage && (
+                <Image src={qrImage} style={{ width: 70, height: 70 }} />
               )}
   
             </View>
@@ -217,11 +213,26 @@ import {
   };
   
   
+
+  
   export default function InvoicePdfPage({ invoice }) {
+    const [qrImage, setQrImage] = useState(null);
+  
+    useEffect(() => {
+      if (invoice?.eInvoiceQr) {
+        QRCode.toDataURL(invoice.eInvoiceQr, {
+          width: 400, 
+          margin: 2
+        }).then(setQrImage);
+      }
+    }, [invoice]);
+  
+    if (!invoice) return null;
+  
     return (
       <div style={{ width: "100%", height: "100vh" }}>
         <PDFViewer style={{ width: "100%", height: "100%" }}>
-          <InvoiceDocument invoice={invoice} />
+          <InvoiceDocument invoice={invoice} qrImage={qrImage} />
         </PDFViewer>
       </div>
     );
