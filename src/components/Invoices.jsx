@@ -35,6 +35,7 @@ import ConfirmationModal from './ConfirmationModal';
 import { InvoiceDisplay } from './InvoiceDisplay';
 import PaymentModal from './PaymentModal';
 import { DollarSign } from 'lucide-react';
+import { Eye  } from 'lucide-react';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -498,7 +499,7 @@ const Invoices = ({ onAddInvoice }) => {
 
         {/* Invoices Table */}
         <div className={`overflow-x-auto rounded-lg shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <table className="w-full">
+            <table className="w-full overflow-x-scroll">
             <thead className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <tr>
                 <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider cursor-pointer ${
@@ -578,19 +579,7 @@ const Invoices = ({ onAddInvoice }) => {
                 </th> */}
                 <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
                   darkMode ? 'text-gray-300' : 'text-gray-500'
-                }`}>
-                  عرض الفاتورة
-                </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
-                  darkMode ? 'text-gray-300' : 'text-gray-500'
-                }`}>
-                  تعديل الدفع
-                </th>
-                <th className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
-                  darkMode ? 'text-gray-300' : 'text-gray-500'
-                }`}>
-                  حذف الفاتورة
-                </th>
+                }`}>{t('actions')}</th>
               </tr>
             </thead>
             <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
@@ -675,31 +664,22 @@ const Invoices = ({ onAddInvoice }) => {
                     </button>
                   </td> */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button
-                      onClick={() => openDisplayInvoice(invoice)}
-                      className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs flex items-center gap-1 mx-auto"
-                    >
-                      <Edit size={14} />
-                      {t('viewInvoice')}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button
-                      onClick={() => openPaymentModal(invoice)}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs flex items-center gap-1 mx-auto"
-                    >
-                      <DollarSign size={14} />
-                      تعديل الدفع
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                    <button
-                      onClick={() => openDeleteModal(invoice)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs flex items-center gap-1 mx-auto"
-                    >
-                      <Trash2 size={14} />
-                      {t('deleteInvoice')}
-                    </button>
+                    <div className='flex gap-4'>
+                      <button onClick={() => openDisplayInvoice(invoice)}
+                        className="text-blue-400 cursor-pointer" >
+                        <Eye size={16} />
+                      </button>
+                
+                      <button onClick={() => openPaymentModal(invoice)}
+                        className="text-green-400 cursor-pointer" >
+                        <DollarSign size={16} />
+                      </button>
+              
+                      <button onClick={() => openDeleteModal(invoice)}
+                        className="text-red-400 cursor-pointer">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -221,7 +221,7 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
     <div className={`h-[100%] w-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       <div className="p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-4">الفواتير المفتوحة</h1>
+          <h1 className="text-3xl font-bold mb-4">عرض سعر</h1>
           
           {/* Search Controls */}
           <div className="flex justify-between align-center md:grid-cols-2 gap-4 mb-6">

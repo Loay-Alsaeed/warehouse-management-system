@@ -38,7 +38,8 @@ export default function AddInvoice({
     totalAmount: 0,
     finalAmount: 0,
     paymentMethod: 'cash',
-    invoiceDate: new Date().toISOString().split('T')[0]
+    invoiceDate: new Date().toISOString().split('T')[0],
+    comments: ''
   });
 
   // Combined item selection (products + services) state
@@ -123,7 +124,8 @@ export default function AddInvoice({
               : Math.round(qty * price * 100) / 100;
           return { ...s, quantity: qty, price, total };
         }),
-        invoiceDate: invoiceToEdit.invoiceDate || new Date().toISOString().split('T')[0]
+        invoiceDate: invoiceToEdit.invoiceDate || new Date().toISOString().split('T')[0],
+        comments: invoiceToEdit.comments ?? ''
       });
       setLoading(false);
     } else {
@@ -833,62 +835,7 @@ export default function AddInvoice({
                   منتج جديد
                 </button>
               </div>
-              {/* <div className="relative mb-4">
-                          <input
-                          ref={searchInputRef}
-                          type="text"
-                              value={searchQuery}
-                          onChange={(e) => {
-                              setSearchQuery(e.target.value);
-                              setShowSuggestions(true);
-                              setSelectedSuggestionIndex(-1);
-                          }}
-                              onFocus={() => setShowSuggestions(true)}
-                          onKeyDown={handleSearchKeyDown}
-                          onBlur={(e) => {
-                              if (!e.currentTarget.contains(e.relatedTarget)) {
-                                  setTimeout(() => setShowSuggestions(false), 200);
-                              }
-                          }}
-                          placeholder="ابحث عن منتج أو خدمة..."
-                          className="w-full bg-input border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-                          />
-
-                          {showSuggestions && suggestions && suggestions.length > 0 && (
-                          <ul 
-                              className="absolute left-0 right-0 mt-1 max-h-52 overflow-auto bg-card border border-border rounded shadow-lg"
-                              style={{ 
-                                  zIndex: 1000,
-                                  position: 'absolute',
-                                  top: '100%',
-                                  left: 0,
-                                  right: 0
-                              }}
-                              onMouseDown={(e) => e.preventDefault()}
-                          >
-                                  {suggestions.map((item, i) => (
-                                      <li
-                                          key={`${item.type}-${item.id}-${i}`}
-                                      onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          selectSuggestion(item, i);
-                                      }}
-                                      className={`px-4 py-3 cursor-pointer flex justify-between items-center text-sm ${
-                                          selectedSuggestionIndex === i ? 'bg-primary/20 border-l-2 border-primary' : 'hover:bg-muted/50'
-                                      }`}
-                                      >
-                                          <div className="truncate">
-                                              <strong className="mr-2">{item.type === 'product' ? '[P]' : '[S]'}</strong>
-                                              <span>{item.name}</span>
-                                          </div>
-                                          <div className="text-xs text-muted-foreground ml-3">
-                                          {formatNumber(item.price)} JOD
-                                          </div>
-                                      </li>
-                                  ))}
-                              </ul>
-                          )}
-                        </div> */}
+             
               <div className="bg-muted/20 border border-border border-dashed rounded-lg p-5 space-y-4 min-h-30">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -1162,6 +1109,20 @@ export default function AddInvoice({
               </div>
 
             </section>
+            <section className='bg-muted/20 border border-border border-dashed rounded-lg p-5 space-y-4 min-h-15'>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="comments" className="text-sm font-medium text-foreground">ملاحظات</label>
+                <textarea
+                  id="comments"
+                  name="comments"
+                  rows={3}
+                  placeholder="ملاحظات تظهر على الفاتورة المطبوعة..."
+                  value={newInvoice.comments}
+                  onChange={(e) => setNewInvoice({ ...newInvoice, comments: e.target.value })}
+                  className="w-full bg-input border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring resize-y min-h-[4.5rem]"
+                />
+              </div>
+            </section>
 
           </div>
           {/* Right section */}
@@ -1363,7 +1324,7 @@ export default function AddInvoice({
                     ) : (
                       <>
                         <Icon icon="solar:diskette-bold" className="size-5" />
-                        حفظ كفاتورة مفتوحة
+                        حفظ كعرض سعر
                       </>
                     )}
                   </button>

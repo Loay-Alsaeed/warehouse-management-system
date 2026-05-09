@@ -14,7 +14,7 @@ const Sidebar = ({ activePage, onPageChange }) => {
     { id: 'suppliers', label: t('suppliers'), icon: Building2 },
     { id: 'customers', label: t('customers'), icon: User },
     { id: 'invoices', label: t('invoices'), icon: FileText },
-    { id: 'openInvoices', label: 'الفواتير المفتوحة', icon: FileCheck },
+    { id: 'openInvoices', label: "عرض سعر", icon: FileCheck },
     { id: 'dailyInventory', label: t('dailyInventory'), icon: TrendingUp },
     { id: 'shipments', label: t('shipments'), icon: Truck }
   ];

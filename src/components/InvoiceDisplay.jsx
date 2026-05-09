@@ -270,6 +270,13 @@ export function InvoiceDisplay({ invoice, onClose, qrCode, handleSendInvoice }) 
 								</tr>
 							</tbody>
 						</table>
+
+						{invoiceObj.comments?.trim() ? (
+							<div className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50 text-sm text-black">
+								<p className="font-semibold mb-2">ملاحظات</p>
+								<p className="whitespace-pre-wrap text-gray-800">{invoiceObj.comments.trim()}</p>
+							</div>
+						) : null}
 					</div>
 
 					{/* empty space  */}

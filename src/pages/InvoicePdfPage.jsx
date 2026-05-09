@@ -35,7 +35,7 @@ import {
       top: 20,
       left: 30,
       right: 30,
-      borderBottom: "1 solid #ccc",
+      borderBottom: "1 solid black",
       paddingBottom: 10,
       textAlign: "right"
     },
@@ -88,7 +88,7 @@ import {
     },
 
     customerBox: {
-      border: "1 solid #ddd",
+      border: "1 solid black",
       padding: 8,
       marginBottom: 10
     },
@@ -103,6 +103,25 @@ import {
       justifyContent: "space-between",
       marginBottom: 3
     },
+
+    notesBox: {
+      border: "1 solid black",
+      padding: 8,
+      marginTop: 10,
+      marginBottom: 6
+    },
+
+    notesTitle: {
+      fontSize: 10,
+      fontWeight: "bold",
+      marginBottom: 4
+    },
+
+    notesText: {
+      fontSize: 9,
+      lineHeight: 1.4,
+      direction: "rtf"
+    }
   });
   
   
@@ -155,7 +174,7 @@ import {
               <Text>نوع السيارة: {invoice.carType || "-"}</Text>
               <Text>رقم السيارة: {invoice.carNumber || "-"}</Text>
             </View>
-
+  
           </View>
 
 
@@ -198,6 +217,14 @@ import {
             </View>
   
           </View>
+
+          
+          {invoice?.comments?.trim() ? (
+            <View style={styles.notesBox}>
+              <Text style={styles.notesTitle}>ملاحظات</Text>
+              <Text style={styles.notesText}>{invoice.comments.trim()}</Text>
+            </View>
+          ) : null}
   
           <Text
             style={styles.footer}
