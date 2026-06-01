@@ -154,7 +154,7 @@ doc.ele("cac:AccountingCustomerParty")
 
     .ele("cac:PartyIdentification")
       .ele("cbc:ID",{schemeID:"NIN"})
-      .txt(invoice.customerName ?? "Cash Customer")
+      .txt(invoice.phone ?? "")
       .up()
     .up()
 
