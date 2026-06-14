@@ -102,3 +102,15 @@
     color: #000 !important;
     background-color: transparent !important;
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #7589a8 #1e2939;
+  }
+
+  .rdt_Pagination button {
+    color: white !important;
+}
+html {
+  background-color: var(--background);
+}

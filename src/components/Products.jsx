@@ -76,7 +76,8 @@ const Products = () => {
     category: '',
     partNumber: '',
     brandName: '',
-    cost: ''
+    cost: '',
+    supplierName: ''
   });
 
   useEffect(() => {
@@ -456,7 +457,8 @@ const Products = () => {
               <form id="addProductForm" onSubmit={handleFormSubmit}>
                 {/* كل صف فيه حقلين أو ثلاث حقول جنب بعض */}
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label htmlFor="productName">{t('productName')}</label>
                       <input
@@ -483,9 +485,6 @@ const Products = () => {
                         }`}
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="category">{t('category')}</label>
                       <input
@@ -505,6 +504,10 @@ const Products = () => {
                         ))}
                       </datalist>
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                   
                     <div>
                       <label htmlFor="brandName">{t('brandName')}</label>
                       <input
@@ -518,9 +521,19 @@ const Products = () => {
                         }`}
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="supplierName">اسم المورد</label>
+                      <input
+                        type="text"
+                        placeholder="اسم المورد"
+                        value={newProduct.supplierName}
+                        onChange={(e) => setNewProduct({ ...newProduct, supplierName: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
                     <div>
                       <label htmlFor="storageLocation">{t('storageLocation')}</label>
                       <input
@@ -534,6 +547,10 @@ const Products = () => {
                         }`}
                       />
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      
                     <div>
                       <label htmlFor="quantity">{t('quantity')}</label>
                       <input
@@ -547,9 +564,6 @@ const Products = () => {
                         }`}
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="cost">{t('cost')}</label>
                       <input
@@ -598,7 +612,7 @@ const Products = () => {
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                    className="flex-1 px-4 py-2 rounded bg-red-500 hover:bg-red-600"
                   >
                     {t('cancel')}
                   </button>
@@ -631,7 +645,7 @@ const Products = () => {
               <h2 className="text-xl font-bold mb-4">{t('editProduct')}</h2>
               <form id="editProductForm" onSubmit={handleFormSubmit}>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label htmlFor="editName">{t('productName')}</label>
                       <input
@@ -660,9 +674,6 @@ const Products = () => {
                         }`}
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="editCategory">{t('category')}</label>
                       <input
@@ -683,6 +694,10 @@ const Products = () => {
                         ))}
                       </datalist>
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
                     <div>
                       <label htmlFor="editBrandName">{t('brandName')}</label>
                       <input
@@ -697,19 +712,14 @@ const Products = () => {
                         }`}
                       />
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="editCost">{t('cost')}</label>
+                      <label htmlFor="supplierName">اسم المورد</label>
                       <input
-                        id="editCost"
-                        type="number"
-                        step="0.01"
-                        placeholder={t('cost')}
-                        value={editingProduct.cost || ''}
-                        onChange={(e) => setEditingProduct({ ...editingProduct, cost: e.target.value })}
-                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        type="text"
+                        placeholder="اسم المورد"
+                        value={editingProduct.supplierName}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, supplierName: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'addProductForm')}
                         className={`w-full px-3 py-2 border rounded ${
                           darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
                         }`}
@@ -731,7 +741,22 @@ const Products = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label htmlFor="editCost">{t('cost')}</label>
+                      <input
+                        id="editCost"
+                        type="number"
+                        step="0.01"
+                        placeholder={t('cost')}
+                        value={editingProduct.cost || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, cost: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'editProductForm')}
+                        className={`w-full px-3 py-2 border rounded ${
+                          darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'
+                        }`}
+                      />
+                    </div>
                     <div>
                       <label htmlFor="editQuantity">{t('quantity')}</label>
                       <input
@@ -761,6 +786,9 @@ const Products = () => {
                         }`}
                       />
                     </div>
+                    
+
+                 
                   </div>
 
                   {/* حقل الوصف يكون في صف لوحده بكامل العرض */}
@@ -782,7 +810,7 @@ const Products = () => {
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
-                    className="flex-1 px-4 py-2 border rounded hover:bg-gray-100"
+                    className="flex-1 px-4 py-2  rounded bg-red-500 hover:bg-red-600"
                   >
                     {t('cancel')}
                   </button>

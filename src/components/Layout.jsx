@@ -26,6 +26,7 @@ const Layout = () => {
       return (
         <AddInvoice
           invoiceToEdit={invoice}
+          editSource={source}
           onBack={() => {
             // Close AddInvoice and return to the page we came from
             const targetPage = source === 'invoices' ? 'invoices' : 'openInvoices';
@@ -59,6 +60,12 @@ const Layout = () => {
             onAddInvoice={() =>
               setAddInvoiceContext({
                 invoice: null,
+                source: 'invoices',
+              })
+            }
+            onEditInvoice={(invoice) =>
+              setAddInvoiceContext({
+                invoice,
                 source: 'invoices',
               })
             }

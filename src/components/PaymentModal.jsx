@@ -53,7 +53,7 @@ export default function PaymentModal({
   const remainingAmount = invoiceAmount - paymentData.amount;
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 w-full h-full bg-[#00000085] bg-opacity-50 flex items-center justify-center z-505">
       <div className={`p-6 rounded-lg w-full max-w-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">معلومات الدفع </h2>
@@ -122,7 +122,7 @@ export default function PaymentModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-100"
+              className="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
             >
               {t('cancel')}
             </button>

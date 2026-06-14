@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@iconify/react": "^6.0.2",
+    "@mui/icons-material": "^9.1.1",
+    "@mui/material": "^9.1.1",
     "@react-pdf/renderer": "^4.5.1",
     "@tailwindcss/vite": "^4.1.12",
     "axios": "^1.14.0",
@@ -20,9 +24,11 @@
     "html2pdf.js": "^0.14.0",
     "i18next": "^25.4.2",
     "lucide-react": "^0.542.0",
+    "moment": "^2.30.1",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.1",
+    "react-data-table-component": "^8.3.0",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.3",
     "react-icons": "^5.5.0",

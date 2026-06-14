@@ -9,6 +9,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  getDoc,
   getDocs,
   writeBatch
 } from 'firebase/firestore';
@@ -16,6 +17,7 @@ import PaymentModal from './PaymentModal';
 
 export default function AddInvoice({
   invoiceToEdit = null,
+  editSource = null,
   onBack,
   onInvoiceAdded
 }) {
@@ -642,6 +644,107 @@ export default function AddInvoice({
     return `INV-${year}${month}${day}-${random}`;
   };
 
+  const isEditingClosedInvoice = editSource === 'invoices' && !!invoiceToEdit?.id;
+
+  const buildProductQuantityMap = (productsList = []) => {
+    const map = {};
+    for (const product of productsList) {
+      if (!product.productId) continue;
+      map[product.productId] = (map[product.productId] || 0) + (parseInt(product.quantity, 10) || 0);
+    }
+    return map;
+  };
+
+  const handleUpdateClosedInvoice = async () => {
+    if (!newInvoice.customerId || (!(newInvoice.products || []).length && !(newInvoice.services || []).length)) {
+      showError(t('error'), t('invoiceValidationError') || 'Invoice missing required fields');
+      return;
+    }
+
+    if (!invoiceToEdit?.id) return;
+
+    if (invoiceToEdit.eInvoiceQr) {
+      showError(t('error'), 'لا يمكن تعديل فاتورة مرحّلة إلى نظام الفوترة');
+      return;
+    }
+
+    if (isSaving) return;
+    setIsSaving(true);
+
+    try {
+      const batch = writeBatch(db);
+      const oldQtyMap = buildProductQuantityMap(invoiceToEdit.products);
+      const newQtyMap = buildProductQuantityMap(newInvoice.products);
+      const allProductIds = new Set([...Object.keys(oldQtyMap), ...Object.keys(newQtyMap)]);
+
+      for (const productId of allProductIds) {
+        const delta = (newQtyMap[productId] || 0) - (oldQtyMap[productId] || 0);
+        if (delta === 0) continue;
+
+        const productRef = doc(db, 'products', productId);
+        const productSnap = await getDoc(productRef);
+        if (!productSnap.exists()) continue;
+
+        const currentQty = productSnap.data().quantity || 0;
+        const updatedQty = currentQty - delta;
+
+        if (updatedQty < 0) {
+          const productName =
+            products.find((p) => p.id === productId)?.name ||
+            (newInvoice.products || []).find((p) => p.productId === productId)?.productName ||
+            (invoiceToEdit.products || []).find((p) => p.productId === productId)?.productName ||
+            productId;
+          setIsSaving(false);
+          showError(t('error'), `الكمية غير كافية للمنتج: ${productName}`);
+          return;
+        }
+
+        batch.update(productRef, {
+          quantity: updatedQty,
+          available: updatedQty > 0,
+        });
+      }
+
+      const paymentAmount = parseFloat(invoiceToEdit.paymentAmount) || 0;
+      const finalAmount = parseFloat(newInvoice.finalAmount) || 0;
+      const remainingAmount = finalAmount - paymentAmount;
+
+      const { id: _omitId, ...invoiceFields } = newInvoice;
+      const invoiceData = {
+        ...invoiceFields,
+        paymentAmount,
+        remainingAmount,
+        paymentMethod: invoiceToEdit.paymentMethod,
+        paymentDate: invoiceToEdit.paymentDate,
+        status: paymentAmount >= finalAmount ? 'paid' : paymentAmount > 0 ? 'partial' : 'unpaid',
+        createdAt: invoiceToEdit.createdAt || new Date(),
+        updatedAt: new Date(),
+        eInvoiceSubmitted: invoiceToEdit.eInvoiceSubmitted || false,
+        eInvoiceQr: invoiceToEdit.eInvoiceQr || null,
+        eInvoiceNum: invoiceToEdit.eInvoiceNum || null,
+        eInvoiceUuid: invoiceToEdit.eInvoiceUuid || null,
+      };
+
+      const invoiceRef = doc(db, 'invoices', invoiceToEdit.id);
+      batch.update(invoiceRef, invoiceData);
+      await batch.commit();
+
+      setIsSaving(false);
+      success(t('success'), t('invoiceUpdated') || 'Invoice updated successfully');
+
+      if (onInvoiceAdded) {
+        onInvoiceAdded();
+      }
+      if (onBack) {
+        onBack();
+      }
+    } catch (err) {
+      console.error('Error updating invoice:', err);
+      setIsSaving(false);
+      showError(t('error'), t('invoiceSaveError') || 'Failed to save invoice');
+    }
+  };
+
   // Save as open invoice
   const handleSaveAsOpenInvoice = async () => {
     if (!newInvoice.customerId || (!(newInvoice.products || []).length && !(newInvoice.services || []).length)) {
@@ -661,12 +764,11 @@ export default function AddInvoice({
         updatedAt: new Date()
       };
 
-      if (invoiceToEdit && invoiceToEdit.id) {
-        // Update existing open invoice
+      if (invoiceToEdit && invoiceToEdit.id && editSource === 'openInvoices') {
         const invoiceRef = doc(db, 'openInvoices', invoiceToEdit.id);
         await updateDoc(invoiceRef, invoiceData);
         success(t('success'), t('invoiceUpdated') || 'Invoice updated successfully');
-      } else {
+      } else if (!isEditingClosedInvoice) {
         // Create new open invoice
         await addDoc(collection(db, 'openInvoices'), invoiceData);
         success(t('success'), t('invoiceSavedAsOpen') || 'Invoice saved as open invoice');
@@ -1311,34 +1413,61 @@ export default function AddInvoice({
                   <span className="font-bold text-2xl text-primary">{formatNumber(newInvoice.finalAmount)} JOD</span>
                 </div>
                 <div className="pt-4 space-y-3">
-                  <button
-                    onClick={handleSaveAsOpenInvoice}
-                    disabled={isSaving}
-                    className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition-all"
-                  >
-                    {isSaving ? (
-                      <>
-                        <Icon icon="svg-spinners:ring-resize" className="size-5 animate-spin" />
-                        {t('saving')}...
-                      </>
-                    ) : (
-                      <>
-                        <Icon icon="solar:diskette-bold" className="size-5" />
-                        حفظ كعرض سعر
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={handleCloseInvoice}
-                    disabled={isSaving}
-                    className="w-full py-3.5 px-4 bg-[#10b981] hover:bg-[#059669] disabled:bg-[#10b981]/50 disabled:cursor-not-allowed text-white rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition-all"
-                  >
-                    <Icon icon="solar:check-circle-bold" className="size-5" />
-                    الانتقال للدفع
-                  </button>
-                  <button onClick={onBack} className="w-full py-3 px-4 bg-transparent border border-border hover:bg-muted text-foreground rounded-lg font-medium transition-colors">
-                    {t('cancel')}
-                  </button>
+                  {isEditingClosedInvoice ? (
+                    <>
+                      <button
+                        onClick={handleUpdateClosedInvoice}
+                        disabled={isSaving}
+                        className="w-full py-3.5 px-4 bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-primary-foreground rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        {isSaving ? (
+                          <>
+                            <Icon icon="svg-spinners:ring-resize" className="size-5 animate-spin" />
+                            {t('saving')}...
+                          </>
+                        ) : (
+                          <>
+                            <Icon icon="solar:diskette-bold" className="size-5" />
+                            حفظ التعديلات
+                          </>
+                        )}
+                      </button>
+                      <button onClick={onBack} className="w-full py-3 px-4 bg-transparent border border-border hover:bg-muted text-foreground rounded-lg font-medium transition-colors">
+                        {t('cancel')}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleSaveAsOpenInvoice}
+                        disabled={isSaving}
+                        className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        {isSaving ? (
+                          <>
+                            <Icon icon="svg-spinners:ring-resize" className="size-5 animate-spin" />
+                            {t('saving')}...
+                          </>
+                        ) : (
+                          <>
+                            <Icon icon="solar:diskette-bold" className="size-5" />
+                            حفظ كعرض سعر
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleCloseInvoice}
+                        disabled={isSaving}
+                        className="w-full py-3.5 px-4 bg-[#10b981] hover:bg-[#059669] disabled:bg-[#10b981]/50 disabled:cursor-not-allowed text-white rounded-lg font-semibold shadow-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        <Icon icon="solar:check-circle-bold" className="size-5" />
+                        الانتقال للدفع
+                      </button>
+                      <button onClick={onBack} className="w-full py-3 px-4 bg-transparent border border-border hover:bg-muted text-foreground rounded-lg font-medium transition-colors">
+                        {t('cancel')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </section>
             </div>

@@ -112,7 +112,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {i18n.language === 'ar' ? 'القيمة الإجمالية' : 'Total Value'}
+                {i18n.language === 'ar' ? 'مجموع قيم التكلفة' : 'Total Value'}
               </p>
               <p className="text-2xl font-bold text-yellow-600">{stats.totalValue} JOD</p>
             </div>

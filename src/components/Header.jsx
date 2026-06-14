@@ -33,15 +33,15 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button
+        {/* <button
           onClick={toggleTheme}
           className={`px-3 py-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           title={darkMode ? t('lightMode') : t('darkMode')}
         >
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-
+        </button> */}
+{/* 
         <button
           onClick={toggleLanguage}
           className={`px-3 py-2  rounded-lg transition-colors ${darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -49,7 +49,7 @@ const Header = () => {
           title={i18n.language === 'ar' ? 'English' : 'العربية'}
         >
           <Globe size={20} />
-        </button>
+        </button> */}
 
         <button
           onClick={handleLogout}
