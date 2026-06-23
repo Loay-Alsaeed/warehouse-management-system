@@ -283,45 +283,47 @@ const Products = () => {
               />
             </div>
 
+
+
             <Select
-  options={categoryOptions}
-  value={categoryOptions.find(
-    option => option.value === filterCategory
-  )}
-  onChange={(selectedOption) =>
-    setFilterCategory(selectedOption?.value || 'all')
-  }
-  placeholder={t('allCategories')}
-  isSearchable
-  isClearable
-  styles={{
-    control: (base) => ({
-      ...base,
-      backgroundColor: darkMode ? '#1f2937' : 'white',
-      borderColor: darkMode ? '#4b5563' : '#d1d5db',
-      color: darkMode ? 'white' : 'black',
-    }),
-    menu: (base) => ({
-      ...base,
-      backgroundColor: darkMode ? '#1f2937' : 'white',
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isFocused
-        ? (darkMode ? '#374151' : '#e5e7eb')
-        : (darkMode ? '#1f2937' : 'white'),
-      color: darkMode ? 'white' : 'black',
-    }),
-    singleValue: (base) => ({
-      ...base,
-      color: darkMode ? 'white' : 'black',
-    }),
-    input: (base) => ({
-      ...base,
-      color: darkMode ? 'white' : 'black',
-    }),
-  }}
-/>
+              options={categoryOptions}
+              value={categoryOptions.find(
+                option => option.value === filterCategory
+              )}
+              onChange={(selectedOption) =>
+                setFilterCategory(selectedOption?.value || 'all')
+              }
+              placeholder={t('allCategories')}
+              isSearchable
+              isClearable
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: darkMode ? '#1f2937' : 'white',
+                  borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                  color: darkMode ? 'white' : 'black',
+                }),
+                menu: (base) => ({
+                  ...base,
+                  backgroundColor: darkMode ? '#1f2937' : 'white',
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused
+                    ? (darkMode ? '#374151' : '#e5e7eb')
+                    : (darkMode ? '#1f2937' : 'white'),
+                  color: darkMode ? 'white' : 'black',
+                }),
+                singleValue: (base) => ({
+                  ...base,
+                  color: darkMode ? 'white' : 'black',
+                }),
+                input: (base) => ({
+                  ...base,
+                  color: darkMode ? 'white' : 'black',
+                }),
+              }}
+            />
       
       
 
