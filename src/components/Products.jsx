@@ -23,11 +23,13 @@ import {
 } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
 import ConfirmationModal from './ConfirmationModal';
+import Select from 'react-select';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [categoryInput, setCategoryInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
@@ -42,6 +44,13 @@ const Products = () => {
   const { darkMode } = useTheme();
   const { success, error: showError, warning } = useNotifications();
 
+  const categoryOptions = [
+    { value: 'all', label: t('allCategories') },
+    ...categories.map(category => ({
+      value: category,
+      label: category
+    }))
+  ];
   // Handle form submit
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -274,20 +283,47 @@ const Products = () => {
               />
             </div>
 
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className={`px-4 py-2 border rounded-lg ${
-                darkMode 
-                  ? 'bg-gray-800 border-gray-600 text-white' 
-                  : 'bg-white border-gray-300 text-gray-900'
-              }`}
-            >
-              <option value="all">{t('allCategories')}</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+            <Select
+  options={categoryOptions}
+  value={categoryOptions.find(
+    option => option.value === filterCategory
+  )}
+  onChange={(selectedOption) =>
+    setFilterCategory(selectedOption?.value || 'all')
+  }
+  placeholder={t('allCategories')}
+  isSearchable
+  isClearable
+  styles={{
+    control: (base) => ({
+      ...base,
+      backgroundColor: darkMode ? '#1f2937' : 'white',
+      borderColor: darkMode ? '#4b5563' : '#d1d5db',
+      color: darkMode ? 'white' : 'black',
+    }),
+    menu: (base) => ({
+      ...base,
+      backgroundColor: darkMode ? '#1f2937' : 'white',
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isFocused
+        ? (darkMode ? '#374151' : '#e5e7eb')
+        : (darkMode ? '#1f2937' : 'white'),
+      color: darkMode ? 'white' : 'black',
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: darkMode ? 'white' : 'black',
+    }),
+    input: (base) => ({
+      ...base,
+      color: darkMode ? 'white' : 'black',
+    }),
+  }}
+/>
+      
+      
 
             <button
               onClick={() => setShowAddModal(true)}
