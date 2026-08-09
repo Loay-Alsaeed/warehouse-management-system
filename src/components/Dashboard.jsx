@@ -22,21 +22,22 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
-  useEffect(() => {
-    const getIp = async () => {
-      
-      await fetch('http://localhost:5050/ip')
-        .then(response => response.json())
-        .then(data => {
-          console.log('IP Address:', data.ip);
-        })
-        .catch(error => {
-          console.error('Error fetching IP address:', error);
-        });
+  // useEffect(() => {
+  //   const getIp = async () => {
 
-    }
-    getIp();
-  }, [])
+  //     await fetch('http://localhost:5050/ip')
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         console.log('IP Address:', data.ip);
+  //       })
+  //       .catch(error => {
+  //         console.error('Error fetching IP address:', error);
+  //       });
+
+  //   }
+  //   getIp();
+  // }, [])
+  
 
   const fetchStats = async () => {
     try {
