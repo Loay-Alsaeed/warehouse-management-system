@@ -7,10 +7,12 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
-  });
+  // const [darkMode, setDarkMode] = useState(() => {
+  //   const saved = localStorage.getItem('darkMode');
+  //   return saved ? JSON.parse(saved) : false;
+  // });
+
+    const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
