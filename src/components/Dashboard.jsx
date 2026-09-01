@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import { Package, TrendingUp, AlertTriangle, MapPin } from 'lucide-react';
+import { Package, TrendingUp, AlertTriangle, MapPin, Wallet } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import LoadingSpinner from './LoadingSpinner';
@@ -47,7 +47,7 @@ const Dashboard = () => {
       const totalProducts = products.length;
       const availableProducts = products.filter(p => (parseInt(p.quantity) || 0) > 0).length;
       const unavailableProducts = totalProducts - availableProducts;
-      const totalValue = products.reduce((sum, p) => sum + ((parseFloat(p.price) || 0) * (parseInt(p.quantity) || 0)), 0);
+      const totalValue = products.reduce((sum, p) => sum + ((parseFloat(p.cost) || 0) * (parseInt(p.quantity) || 0)), 0);
       const uniqueCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
       const totalCategories = uniqueCategories.length;
 
@@ -125,11 +125,13 @@ const Dashboard = () => {
         <div className={`p-6 rounded-lg shadow-lg ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border`}>
           <div className="flex items-center space-x-2">
             <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
-              <MapPin size={24} />
+              {/* <MapPin size={24} /> */}
+              <Wallet size={24}/>
+
             </div>
             <div className="ml-4">
               <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {i18n.language === 'ar' ? 'مجموع قيم التكلفة' : 'Total Value'}
+                {i18n.language === 'ar' ? "مجموع تكلفة المنتجات" : 'Total Value'}
               </p>
               <p className="text-2xl font-bold text-yellow-600">{stats.totalValue} JOD</p>
             </div>
