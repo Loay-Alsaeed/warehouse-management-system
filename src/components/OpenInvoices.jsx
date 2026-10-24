@@ -216,7 +216,7 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
   };
 
   const handlePrintInvoice = (invoice) => {
-    const invoiceData = {...invoice, invoiceNumber: null}; // Remove the id field to avoid confusion in the PDF
+    const invoiceData = {...invoice, invoiceNumber: null, title: "عرض سعر"}; // Remove the id field to avoid confusion in the PDF
     localStorage.setItem("invoice_pdf", JSON.stringify(invoiceData));
 		window.open("/invoice-pdf", "_blank");
 

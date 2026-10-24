@@ -35,9 +35,17 @@ import {
       top: 20,
       left: 30,
       right: 30,
-      borderBottom: "1 solid black",
       paddingBottom: 10,
-      textAlign: "right"
+      textAlign: "right",
+    },
+
+    title:{
+      textAlign: "center",
+      fontSize: 12,
+      fontWeight: "bold",
+      marginBottom: 0,
+      borderTop: "1 solid black",
+
     },
   
     row: {
@@ -165,8 +173,13 @@ import {
               )}
   
             </View>
+            {invoice?.title && (
+              <View style={styles.title}>
+                <Text>{invoice?.title}</Text>
+              </View>
+            )}
           </View>
-  
+
           <View style={styles.customerBox}>
             <Text style={styles.customerTitle}>بيانات العميل</Text>
 
