@@ -11,7 +11,8 @@ import {
   User,
   Calculator,
   XCircle,
-  Printer
+  Printer,
+  Save 
 } from 'lucide-react';
 import { db } from '../firebase';
 import { 
@@ -221,6 +222,29 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
 
   }
 
+  const handleDeleteInvoice = async (invoice) => {
+    if (!invoice?.id) {
+      showError(t('error'), t('invoiceNotFound'));
+      return;
+    }
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, 'openInvoices', invoice.id));
+      setOpenInvoices((currentInvoices) =>
+        currentInvoices.filter((currentInvoice) => currentInvoice.id !== invoice.id)
+      );
+      success(
+        t('invoiceDeleted') || 'Invoice Deleted',
+        t('openInvoiceDeletedMessage') || 'Open invoice deleted successfully'
+      );
+    } catch (err) {
+      console.error('Error deleting open invoice:', err);
+      showError(t('error'), t('invoiceDeleteError') || 'Failed to delete invoice');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner page="openInvoices" />;
   }
@@ -362,10 +386,17 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
                       </button>
                       <button
                         onClick={() => handleCloseInvoice(invoice)}
+                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs flex items-center gap-1"
+                      >
+                        <Save  size={14} />
+                        {t('حفظ الفاتورة')}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteInvoice(invoice)}
                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs flex items-center gap-1"
                       >
-                        <XCircle size={14} />
-                        {t('اغلاق الفاتورة')}
+                        <Save  size={14} />
+                        {t('حذف الفاتورة')}
                       </button>
                     </div>
                   </td>
