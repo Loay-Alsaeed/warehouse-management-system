@@ -127,7 +127,7 @@ import {
   
   const InvoiceDocument = ({ invoice, qrImage }) => {
 
-
+    console.log(invoice)
 
     const allItems = [
       ...(invoice?.products || []),
@@ -154,7 +154,9 @@ import {
 
   
               <View>
-                <Text>{invoice?.invoiceNumber} :رقم الفاتورة  </Text>
+                {invoice?.invoiceNumber && (
+                  <Text>{invoice?.invoiceNumber} :رقم الفاتورة  </Text>
+                )}
                 <Text>التاريخ: {invoice?.invoiceDate}</Text>
               </View>
 

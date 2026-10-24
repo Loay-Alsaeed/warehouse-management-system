@@ -10,7 +10,8 @@ import {
   FileText,
   User,
   Calculator,
-  XCircle
+  XCircle,
+  Printer
 } from 'lucide-react';
 import { db } from '../firebase';
 import { 
@@ -213,6 +214,13 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
     }
   };
 
+  const handlePrintInvoice = (invoice) => {
+    const invoiceData = {...invoice, invoiceNumber: null}; // Remove the id field to avoid confusion in the PDF
+    localStorage.setItem("invoice_pdf", JSON.stringify(invoiceData));
+		window.open("/invoice-pdf", "_blank");
+
+  }
+
   if (loading) {
     return <LoadingSpinner page="openInvoices" />;
   }
@@ -339,18 +347,25 @@ const OpenInvoices = ({ onEditInvoice, onAddInvoice }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex gap-2 justify-center">
                       <button
+                        onClick={() => handlePrintInvoice(invoice)}
+                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs flex items-center gap-1"
+                      >
+                        <Printer size={14} />
+                        {t('طباعة')}
+                      </button>
+                      <button
                         onClick={() => handleEditInvoice(invoice)}
                         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs flex items-center gap-1"
                       >
                         <Edit size={14} />
-                        {t('edit')}
+                        {t('تعديل')}
                       </button>
                       <button
                         onClick={() => handleCloseInvoice(invoice)}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs flex items-center gap-1"
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs flex items-center gap-1"
                       >
                         <XCircle size={14} />
-                        {t('closeInvoice')}
+                        {t('اغلاق الفاتورة')}
                       </button>
                     </div>
                   </td>
