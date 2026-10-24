@@ -41,11 +41,10 @@ import {
 
     title:{
       textAlign: "center",
-      fontSize: 12,
+      fontSize: 16,
       fontWeight: "bold",
-      marginBottom: 0,
+      paddingTop: 10,
       borderTop: "1 solid black",
-
     },
   
     row: {
